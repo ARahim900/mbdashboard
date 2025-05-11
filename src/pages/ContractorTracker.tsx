@@ -1,5 +1,7 @@
+
 import React from 'react';
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell
@@ -8,8 +10,9 @@ import {
   FileText, Activity, ArrowDown, ArrowUp, RefreshCw, Download,
   Building2, CheckCircle2, AlertTriangle, XCircle, Calendar,
   DollarSign, Search, Filter, MoreVertical, Clock, Tag,
-  AlertCircle, TrendingUp, Package, Zap, Settings
+  AlertCircle, TrendingUp, Package, Zap, Settings, ArrowLeft
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Define the base color scheme
 const BASE_COLOR = '#4E4456';
@@ -166,6 +169,7 @@ const MuscatBayContractTracker = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('contractor');
   const [activeTab, setActiveTab] = useState('overview');
+  const navigate = useNavigate();
 
   // Filter contracts based on status and search query
   const filteredContracts = useMemo(() => {
@@ -212,10 +216,23 @@ const MuscatBayContractTracker = () => {
       {/* Header */}
       <div className="bg-[#4E4456] text-white shadow-md">
         <div className="container mx-auto px-4 py-6">
-          <h1 className="text-2xl font-bold">Muscat Bay Contract Tracker</h1>
-          <p className="text-gray-200 mt-1">
-            Comprehensive contract management and tracking system
-          </p>
+          <div className="flex items-center">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="mr-2 text-white hover:bg-white/20" 
+              onClick={() => navigate('/')}
+              aria-label="Back to dashboard"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold">Muscat Bay Contract Tracker</h1>
+              <p className="text-gray-200 mt-1">
+                Comprehensive contract management and tracking system
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
