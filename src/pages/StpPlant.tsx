@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState, useMemo } from "react";
 import {
@@ -506,7 +507,7 @@ const MuscatBayStpDashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip />
+                  <Tooltip content={<CustomTooltip />} />
                   <Legend />
                   <Area 
                     type="monotone" 
@@ -532,7 +533,7 @@ const MuscatBayStpDashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip />
+                  <Tooltip content={<CustomTooltip />} />
                   <Legend />
                   <Line 
                     type="monotone" 

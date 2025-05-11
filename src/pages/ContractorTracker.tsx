@@ -62,7 +62,7 @@ const contractData = {
 };
 
 // KPI Card Component
-const ContractKPICard = ({ title, value, unit, change, icon, bgColor, size, status }) => {
+const ContractKPICard = ({ title, value, unit, change = "0", icon, bgColor, size, status = "Normal" }) => {
   const isPositive = parseFloat(change) >= 0;
   const Icon = icon;
   
@@ -265,6 +265,7 @@ const MuscatBayContractTracker = () => {
                 title="Total Contracts"
                 value={statistics.totalContracts}
                 unit=""
+                change="0"
                 icon={FileText}
                 bgColor="border-blue-500"
                 size="large"
@@ -274,6 +275,7 @@ const MuscatBayContractTracker = () => {
                 title="Active Contracts"
                 value={statistics.activeContracts}
                 unit=""
+                change="0"
                 icon={CheckCircle2}
                 bgColor="border-green-500"
                 size="large"
@@ -283,14 +285,17 @@ const MuscatBayContractTracker = () => {
                 title="Total Annual Value"
                 value={`OMR ${(statistics.totalValue / 1000).toFixed(0)}k`}
                 unit=""
+                change="0"
                 icon={DollarSign}
                 bgColor="border-green-500"
                 size="large"
+                status="Normal"
               />
               <ContractKPICard
                 title="Expiring Soon"
                 value={statistics.expiringNext30Days}
                 unit="in 30 days"
+                change="0"
                 icon={AlertTriangle}
                 bgColor="border-amber-500"
                 size="large"
@@ -318,7 +323,7 @@ const MuscatBayContractTracker = () => {
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
-                      <Tooltip />
+                      <Tooltip content={<CustomTooltip />} />
                       <Legend />
                     </PieChart>
                   </ResponsiveContainer>
