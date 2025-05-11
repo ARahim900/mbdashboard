@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState, useMemo } from "react";
 import {
@@ -297,7 +296,9 @@ const CustomTooltip = ({ active, payload, label }) => {
               {entry.name}:
             </span>
             <span className="ml-2 font-medium">
-              {entry.value.toLocaleString()} {entry.name.includes('Efficiency') || entry.name.includes('Utilization') ? '%' : 'm³'}
+              {typeof entry.value === 'number' 
+                ? entry.value.toLocaleString() 
+                : entry.value}
             </span>
           </div>
         ))}

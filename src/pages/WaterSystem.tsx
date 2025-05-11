@@ -246,13 +246,15 @@ const renderActiveShape = (props) => {
         startAngle={startAngle}
         endAngle={endAngle}
         fill={fill}
+        dataKey="value"
       />
     </g>
   );
 };
 
 // Custom box for reference areas on charts
-const CustomizedDot = ({ cx, cy, payload, value }) => {
+const CustomizedDot = (props) => {
+  const { cx, cy, payload, value } = props;
   return (
     <circle
       cx={cx}
@@ -294,7 +296,7 @@ const AlertBadge = ({ type }) => {
 };
 
 // Water KPI Card Component
-const WaterKPICard = ({ title, value, unit, change = "0", icon, bgColor, size, onClick = () => {} }) => {
+const WaterKPICard = ({ title, value, unit, change = "0", icon, bgColor, size = "md", onClick = () => {} }) => {
   const isPositive = parseFloat(change) > 0;
   
   return (
@@ -539,7 +541,7 @@ const MuscatBayWaterDashboard = () => {
                     dataKey="value" 
                     name="Daily Consumption"
                     stroke={WATER_COLORS.consumption} 
-                    dot={<CustomizedDot windowWidth={window.innerWidth} />}
+                    dot={<CustomizedDot />}
                     activeDot={{ r: 8 }}
                   />
                 </LineChart>

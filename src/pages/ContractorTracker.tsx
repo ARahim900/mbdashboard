@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
@@ -147,12 +146,15 @@ const CustomTooltip = ({ active, payload, label }) => {
         {payload.map((entry, index) => (
           <div key={index} className="flex items-center justify-between mt-1">
             <span style={{ color: entry.color }} className="flex items-center">
-              <div className="w-3 h-3 rounded-full mr-1" style={{ backgroundColor: entry.color }}></div>
+              <div
+                className="w-3 h-3 rounded-full mr-1"
+                style={{ backgroundColor: entry.color }}
+              ></div>
               {entry.name}:
             </span>
             <span className="ml-2 font-medium">
-              {typeof entry.value === 'number' && entry.name.includes('Value') 
-                ? `OMR ${entry.value.toLocaleString()}` 
+              {typeof entry.value === 'number' 
+                ? entry.value.toLocaleString() 
                 : entry.value}
             </span>
           </div>

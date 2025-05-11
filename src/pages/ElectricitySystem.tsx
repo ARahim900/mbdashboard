@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState, useMemo, useCallback, useEffect } from "react";
 import {
@@ -350,7 +349,7 @@ const MuscatBayElectricalDashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip />
+                  <Tooltip content={<CustomTooltip />} />
                   <Legend />
                   <Bar dataKey="totalConsumption" name="Consumption (kWh)" fill={BASE_COLOR} />
                   <Bar dataKey="cost" name="Cost (OMR)" fill={SUCCESS_COLOR} />
