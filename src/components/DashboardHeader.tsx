@@ -1,8 +1,9 @@
 
 import React, { useEffect, useState } from "react";
-import { Moon, Sun, Menu } from "lucide-react";
+import { Moon, Sun, Menu, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface DashboardHeaderProps {
   pageTitle: string;
@@ -12,6 +13,9 @@ interface DashboardHeaderProps {
 export function DashboardHeader({ pageTitle, onToggleSidebar }: DashboardHeaderProps) {
   const [darkMode, setDarkMode] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
   
   // Check system preference for dark mode
   useEffect(() => {
@@ -43,6 +47,10 @@ export function DashboardHeader({ pageTitle, onToggleSidebar }: DashboardHeaderP
     }
   };
 
+  const handleBackClick = () => {
+    navigate('/');
+  };
+
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 md:px-6 bg-background/80 backdrop-blur-sm border-b">
       <div className="flex items-center space-x-3">
@@ -55,6 +63,19 @@ export function DashboardHeader({ pageTitle, onToggleSidebar }: DashboardHeaderP
         >
           <Menu className="h-5 w-5" />
         </Button>
+        
+        {!isHomePage && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleBackClick}
+            className="mr-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+            aria-label="Back to dashboard"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        )}
+        
         <h1 className="text-xl font-semibold">{pageTitle}</h1>
       </div>
 

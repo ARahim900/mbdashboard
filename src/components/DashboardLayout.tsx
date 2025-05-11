@@ -25,8 +25,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-subtle dark:bg-gray-900">
-      <DashboardSidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
+    <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-900">
+      <DashboardSidebar 
+        collapsed={sidebarCollapsed} 
+        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
+      />
       
       <div className="flex flex-col flex-1 overflow-hidden">
         <DashboardHeader 
@@ -40,7 +43,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             sidebarCollapsed ? "md:ml-16" : "md:ml-64"
           )}
         >
-          {children}
+          <div className="container mx-auto max-w-full">
+            {children}
+          </div>
         </main>
       </div>
     </div>

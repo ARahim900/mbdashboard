@@ -138,7 +138,7 @@ const StatusBadge = ({ status }) => {
 };
 
 // Custom tooltip for charts
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label }: {active?: boolean, payload?: any[], label?: string}) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-3 shadow-md rounded-md border border-gray-200">
@@ -156,6 +156,7 @@ const CustomTooltip = ({ active, payload, label }) => {
               {typeof entry.value === 'number' 
                 ? entry.value.toLocaleString() 
                 : entry.value}
+              {entry.name.includes('Value') ? ' OMR' : ''}
             </span>
           </div>
         ))}

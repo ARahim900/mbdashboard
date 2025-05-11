@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -197,7 +196,7 @@ const waterData = {
 };
 
 // Custom tooltip for chart components
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label }: {active?: boolean, payload?: any[], label?: string}) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-3 shadow-md rounded-md border border-gray-200">
@@ -212,7 +211,10 @@ const CustomTooltip = ({ active, payload, label }) => {
               {entry.name}:
             </span>
             <span className="ml-2 font-medium">
-              {entry.value.toLocaleString()} {entry.name.includes('consumption') || entry.name.includes('value') ? 'm³' : '%'}
+              {typeof entry.value === 'number' 
+                ? entry.value.toLocaleString() 
+                : entry.value}
+              {entry.name.includes('Consumption') ? ' m³' : ''}
             </span>
           </div>
         ))}
@@ -252,18 +254,17 @@ const renderActiveShape = (props) => {
   );
 };
 
-// Custom box for reference areas on charts
-const CustomizedDot = (props) => {
+// Fix the CustomizedDot component to properly handle props
+const CustomizedDot = (props: any) => {
   const { cx, cy, payload, value } = props;
   return (
     <circle
       cx={cx}
       cy={cy}
-      r={5}
-      stroke={value > 2800 ? DANGER_COLOR : value > 2600 ? WARNING_COLOR : SUCCESS_COLOR}
-      strokeWidth={1.5}
-      fill="white"
-      fillOpacity={1}
+      r={4}
+      strokeWidth={2}
+      stroke="#fff"
+      fill={value > 1000 ? "#FF7300" : "#00C49F"}
     />
   );
 };

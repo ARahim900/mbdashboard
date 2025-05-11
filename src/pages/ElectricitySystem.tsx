@@ -116,7 +116,7 @@ const AssetKPICard = ({ type, name, consumption, change, count, bgColor, icon })
 };
 
 // Custom tooltip for chart components
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label }: {active?: boolean, payload?: any[], label?: string}) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-3 shadow-md rounded-md border border-gray-200">
@@ -131,7 +131,9 @@ const CustomTooltip = ({ active, payload, label }) => {
               {entry.name}:
             </span>
             <span className="ml-2 font-medium">
-              {entry.value.toLocaleString()} {entry.name.includes('Cost') ? 'OMR' : 'kWh'}
+              {typeof entry.value === 'number' 
+                ? `${entry.value.toLocaleString()} ${entry.name.includes('Cost') ? 'OMR' : 'kWh'}`
+                : entry.value}
             </span>
           </div>
         ))}
