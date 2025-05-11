@@ -173,14 +173,14 @@ const MuscatBayElectricalDashboard = () => {
   const chartData = useMemo(() => {
     return electricityData.summary.map(item => ({
       ...item,
-      totalCost: (item.totalConsumption * 0.025).toFixed(2)
+      totalCost: parseFloat((item.totalConsumption * 0.025).toFixed(2))
     }));
   }, []);
 
   const assetChartData = useMemo(() => {
     return electricityData.assetTypes.map(asset => ({
       ...asset,
-      cost: (asset.totalConsumption * 0.025).toFixed(2)
+      cost: parseFloat((asset.totalConsumption * 0.025).toFixed(2))
     }));
   }, []);
 
