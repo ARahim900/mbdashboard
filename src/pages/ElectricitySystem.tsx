@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState, useMemo, useCallback, useEffect } from "react";
 import {
@@ -423,14 +424,14 @@ const MuscatBayElectricalDashboard = () => {
               </tbody>
               <tfoot className="bg-gray-50">
                 <tr>
-                  <td colSpan="2" className="px-6 py-4 text-sm font-medium text-gray-900">
+                  <td colSpan={2} className="px-6 py-4 text-sm font-medium text-gray-900">
                     TOTAL
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
                     {currentMonthData.totalConsumption.toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">
-                    {parseFloat(currentMonthData.totalCost.toFixed(2))}
+                    {parseFloat((currentMonthData.totalCost).toFixed(2))}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                     <div className="flex items-center justify-end">
