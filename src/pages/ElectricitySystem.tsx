@@ -404,7 +404,7 @@ const MuscatBayElectricalDashboard = () => {
                       {asset.totalConsumption.toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-green-600">
-                      {(asset.totalConsumption * 0.025).toFixed(2)}
+                      {parseFloat((asset.totalConsumption * 0.025).toFixed(2))}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                       <div className="flex items-center justify-end">
@@ -430,7 +430,7 @@ const MuscatBayElectricalDashboard = () => {
                     {currentMonthData.totalConsumption.toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">
-                    {currentMonthData.totalCost.toFixed(2)}
+                    {parseFloat(currentMonthData.totalCost.toFixed(2))}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                     <div className="flex items-center justify-end">
