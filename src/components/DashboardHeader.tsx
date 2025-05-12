@@ -14,8 +14,6 @@ export function DashboardHeader({ pageTitle, onToggleSidebar }: DashboardHeaderP
   const [darkMode, setDarkMode] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const location = useLocation();
-  const isHomePage = location.pathname === "/";
   
   // Check system preference for dark mode
   useEffect(() => {
@@ -64,17 +62,15 @@ export function DashboardHeader({ pageTitle, onToggleSidebar }: DashboardHeaderP
           <Menu className="h-5 w-5" />
         </Button>
         
-        {!isHomePage && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleBackClick}
-            className="mr-2 hover:bg-gray-100 dark:hover:bg-gray-800"
-            aria-label="Back to dashboard"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleBackClick}
+          className="hover:bg-gray-100 dark:hover:bg-gray-800"
+          aria-label="Back to dashboard"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
         
         <h1 className="text-xl font-semibold">{pageTitle}</h1>
       </div>
