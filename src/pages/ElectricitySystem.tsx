@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState, useMemo, useCallback, useEffect } from "react";
 import {
@@ -241,7 +242,7 @@ const MuscatBayElectricalDashboard = () => {
               </div>
               <div className="text-right">
                 <div className="text-sm text-gray-600">Total Cost</div>
-                <div className="text-xl font-bold text-green-600">OMR {currentMonthData.totalCost.toFixed(2)}</div>
+                <div className="text-xl font-bold text-green-600">OMR {parseFloat((currentMonthData.totalCost).toFixed(2))}</div>
               </div>
             </div>
           </div>
