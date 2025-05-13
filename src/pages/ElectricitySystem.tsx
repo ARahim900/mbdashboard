@@ -8,6 +8,7 @@ import {
   Zap, Activity, ArrowDown, ArrowUp, RefreshCw, Download, Home, ChevronRight,
   Power, Lightbulb, Droplets, Sliders, Building2, TreePine
 } from "lucide-react";
+import { DashboardLayout } from '@/components/DashboardLayout'; // Import the DashboardLayout component
 
 // Define the base color and generate a color palette
 const BASE_COLOR = '#4E4456';
@@ -183,20 +184,10 @@ const MuscatBayElectricalDashboard = () => {
   }, []);
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-12">
-      {/* Header */}
-      <div className="bg-[#4E4456] text-white shadow-md">
-        <div className="container mx-auto px-4 py-6">
-          <h1 className="text-2xl font-bold">Muscat Bay Electrical Distribution</h1>
-          <p className="text-gray-200 mt-1">
-            Real-time analytics for electrical distribution infrastructure
-          </p>
-        </div>
-      </div>
-
-      <div className="container mx-auto px-4 pt-6">
+    <DashboardLayout>
+      <div className="space-y-6 animate-fade-in">
         {/* Period Selector */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+        <div className="bg-white rounded-lg shadow-md p-4">
           <h3 className="text-lg font-medium mb-4">Period Selection</h3>
           <div className="flex flex-wrap gap-2 justify-center md:justify-start">
             {electricityData.summary.map(period => (
@@ -216,7 +207,7 @@ const MuscatBayElectricalDashboard = () => {
         </div>
 
         {/* Total KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white rounded-lg shadow-md border border-yellow-500 p-4">
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-gray-600 font-medium">Total Consumption</h3>
@@ -278,7 +269,7 @@ const MuscatBayElectricalDashboard = () => {
         </div>
 
         {/* Asset Type KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {electricityData.assetTypes.map((asset) => (
             <AssetKPICard
               key={asset.type}
@@ -294,7 +285,7 @@ const MuscatBayElectricalDashboard = () => {
         </div>
 
         {/* Consumption Trends Chart */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
             <h2 className="text-lg font-medium text-gray-800">
               Electrical Distribution Analysis - Last 12 Months
@@ -360,7 +351,7 @@ const MuscatBayElectricalDashboard = () => {
         </div>
 
         {/* Asset Summary Table */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-lg font-medium text-gray-800 mb-4">Asset Summary - {selectedMonth}</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -448,7 +439,7 @@ const MuscatBayElectricalDashboard = () => {
           </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 
