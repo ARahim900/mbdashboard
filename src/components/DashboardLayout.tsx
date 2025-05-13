@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardHeader } from "./DashboardHeader";
@@ -10,8 +10,18 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  // Get sidebar collapsed state from localStorage or default to false
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    const saved = localStorage.getItem("sidebarCollapsed");
+    return saved ? JSON.parse(saved) : false;
+  });
+  
   const location = useLocation();
+  
+  // Save sidebar state to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem("sidebarCollapsed", JSON.stringify(sidebarCollapsed));
+  }, [sidebarCollapsed]);
   
   // Extract current page title from location
   const getPageTitle = () => {
@@ -24,17 +34,22 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     return "Dashboard";
   };
 
+  // Toggle sidebar visibility
+  const handleToggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-900">
       <DashboardSidebar 
         collapsed={sidebarCollapsed} 
-        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
+        onToggle={handleToggleSidebar} 
       />
       
       <div className="flex flex-col flex-1 overflow-hidden">
         <DashboardHeader 
           pageTitle={getPageTitle()} 
-          onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} 
+          onToggleSidebar={handleToggleSidebar} 
         />
         
         <main 
