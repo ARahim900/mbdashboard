@@ -54,7 +54,7 @@ export function DashboardSidebar({
         </Button>
       </div>
       
-      <nav className="flex-1 py-6 flex flex-col space-y-3 px-3">
+      <nav className="flex-1 py-4 flex flex-col space-y-4 px-3">
         <NavItem to="/" icon={<LayoutDashboard className="w-5 h-5" />} label="Dashboard" collapsed={collapsed} end />
         
         <NavItem to="/water" icon={<Droplet className="w-5 h-5" />} label="Water System" collapsed={collapsed} />
