@@ -1,9 +1,9 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardHeader } from "./DashboardHeader";
 import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -11,8 +11,17 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const location = useLocation();
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
   
+  // Close mobile sidebar when route changes
+  useEffect(() => {
+    if (!isDesktop) {
+      setMobileSidebarOpen(false);
+    }
+  }, [location.pathname, isDesktop]);
+
   // Extract current page title from location
   const getPageTitle = () => {
     const path = location.pathname;
@@ -24,24 +33,36 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     return "Dashboard";
   };
 
+  // Toggle sidebar collapse state
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
+  // Toggle mobile sidebar open/closed
+  const toggleMobileSidebar = () => {
+    setMobileSidebarOpen(!mobileSidebarOpen);
+  };
+
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-900">
       <DashboardSidebar 
         collapsed={sidebarCollapsed} 
-        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
+        onToggle={toggleSidebar}
+        mobileOpen={mobileSidebarOpen}
+        onMobileToggle={toggleMobileSidebar}
       />
       
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className={cn(
+        "flex flex-col flex-1 overflow-hidden transition-all duration-300",
+        isDesktop && !sidebarCollapsed ? "lg:ml-64" : isDesktop ? "lg:ml-16" : "ml-0"
+      )}>
         <DashboardHeader 
           pageTitle={getPageTitle()} 
-          onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} 
+          onToggleSidebar={isDesktop ? toggleSidebar : toggleMobileSidebar} 
         />
         
         <main 
-          className={cn(
-            "flex-1 overflow-y-auto p-4 md:p-6 transition-all duration-300", 
-            sidebarCollapsed ? "md:ml-16" : "md:ml-64"
-          )}
+          className="flex-1 overflow-y-auto p-4 md:p-6"
         >
           <div className="container mx-auto max-w-full">
             {children}
