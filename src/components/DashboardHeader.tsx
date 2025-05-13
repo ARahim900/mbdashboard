@@ -1,20 +1,22 @@
-
 import React, { useEffect, useState } from "react";
 import { Moon, Sun, Menu, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useLocation } from "react-router-dom";
-
 interface DashboardHeaderProps {
   pageTitle: string;
   onToggleSidebar: () => void;
 }
-
-export function DashboardHeader({ pageTitle, onToggleSidebar }: DashboardHeaderProps) {
+export function DashboardHeader({
+  pageTitle,
+  onToggleSidebar
+}: DashboardHeaderProps) {
   const [darkMode, setDarkMode] = useState(false);
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const navigate = useNavigate();
-  
+
   // Check system preference for dark mode
   useEffect(() => {
     const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -23,57 +25,40 @@ export function DashboardHeader({ pageTitle, onToggleSidebar }: DashboardHeaderP
       document.documentElement.classList.add("dark");
     }
   }, []);
-
   const toggleDarkMode = () => {
     const newMode = !darkMode;
     setDarkMode(newMode);
-    
     if (newMode) {
       document.documentElement.classList.add("dark");
       toast({
         title: "Dark mode enabled",
         description: "Your preference has been saved.",
-        duration: 2000,
+        duration: 2000
       });
     } else {
       document.documentElement.classList.remove("dark");
       toast({
         title: "Light mode enabled",
         description: "Your preference has been saved.",
-        duration: 2000,
+        duration: 2000
       });
     }
   };
-
   const handleBackClick = () => {
     navigate('/');
     toast({
       title: "Returning to dashboard",
       description: "Navigating back to the main dashboard",
-      duration: 2000,
+      duration: 2000
     });
   };
-
-  return (
-    <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 md:px-6 bg-background/80 backdrop-blur-sm border-b">
+  return <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 md:px-6 bg-background/80 backdrop-blur-sm border-b">
       <div className="flex items-center space-x-3">
-        <Button
-          variant="ghost" 
-          size="icon" 
-          className="md:hidden" 
-          onClick={onToggleSidebar}
-          aria-label="Toggle sidebar"
-        >
+        <Button variant="ghost" size="icon" className="md:hidden" onClick={onToggleSidebar} aria-label="Toggle sidebar">
           <Menu className="h-5 w-5" />
         </Button>
         
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleBackClick}
-          className="hover:bg-gray-100 dark:hover:bg-gray-800"
-          aria-label="Back to dashboard"
-        >
+        <Button variant="ghost" size="icon" onClick={handleBackClick} className="hover:bg-gray-100 dark:hover:bg-gray-800" aria-label="Back to dashboard">
           <ArrowLeft className="h-5 w-5" />
         </Button>
         
@@ -81,16 +66,9 @@ export function DashboardHeader({ pageTitle, onToggleSidebar }: DashboardHeaderP
       </div>
 
       <div className="flex items-center space-x-4">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={toggleDarkMode} 
-          className="rounded-full"
-          aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-        >
+        <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="rounded-full" aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
           {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </Button>
       </div>
-    </header>
-  );
+    </header>;
 }
