@@ -281,7 +281,7 @@ const OperationalInsightCard = ({ metric, value, detail, status, icon, color }) 
 };
 
 // Custom tooltip for chart components
-const CustomTooltip = ({ active, payload, label }: {active?: boolean, payload?: any[], label?: string}) => {
+const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-3 shadow-md rounded-md border border-gray-200">
@@ -296,10 +296,7 @@ const CustomTooltip = ({ active, payload, label }: {active?: boolean, payload?: 
               {entry.name}:
             </span>
             <span className="ml-2 font-medium">
-              {typeof entry.value === 'number' 
-                ? entry.value.toLocaleString() 
-                : entry.value}
-              {entry.name.includes('Efficiency') || entry.name.includes('Utilization') ? '%' : ''}
+              {entry.value.toLocaleString()} {entry.name.includes('Efficiency') || entry.name.includes('Utilization') ? '%' : 'm³'}
             </span>
           </div>
         ))}
@@ -509,7 +506,7 @@ const MuscatBayStpDashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip />
                   <Legend />
                   <Area 
                     type="monotone" 
@@ -535,7 +532,7 @@ const MuscatBayStpDashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip />
                   <Legend />
                   <Line 
                     type="monotone" 
