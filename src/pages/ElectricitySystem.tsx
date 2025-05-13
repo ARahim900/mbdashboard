@@ -164,7 +164,7 @@ const MuscatBayElectricalDashboard = () => {
   const getPercentChange = useCallback((current, previous) => {
     if (previous === 0) return "N/A";
     const change = ((current / previous - 1) * 100).toFixed(1);
-    return isNaN(change) || !isFinite(change) ? "N/A" : change;
+    return isNaN(parseFloat(change)) || !isFinite(parseFloat(change)) ? "N/A" : change;
   }, []);
 
   // Prepare chart data

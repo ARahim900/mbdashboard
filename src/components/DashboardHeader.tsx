@@ -47,6 +47,11 @@ export function DashboardHeader({ pageTitle, onToggleSidebar }: DashboardHeaderP
 
   const handleBackClick = () => {
     navigate('/');
+    toast({
+      title: "Returning to dashboard",
+      description: "Navigating back to the main dashboard",
+      duration: 2000,
+    });
   };
 
   return (
