@@ -1,7 +1,7 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import { COLORS } from "@/lib/colors";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface EnhancedDashboardCardProps {
   title: string;
@@ -13,6 +13,7 @@ interface EnhancedDashboardCardProps {
   trend: number;
   trendLabel: string;
   onClick?: () => void;
+  className?: string;
 }
 
 export function EnhancedDashboardCard({
@@ -24,43 +25,84 @@ export function EnhancedDashboardCard({
   iconTextColor,
   trend,
   trendLabel,
-  onClick
+  onClick,
+  className
 }: EnhancedDashboardCardProps) {
   const isPositive = trend > 0;
   const trendColorClass = isPositive ? 'text-[#10B981]' : 'text-[#F87171]';
+  const isMobile = useMediaQuery("(max-width: 640px)");
+  const isTablet = useMediaQuery("(max-width: 1024px)");
 
   return (
     <div 
       className={cn(
-        "bg-white dark:bg-[#1F2937] p-5 rounded-xl shadow-md dark:shadow-lg ",
+        "bg-white dark:bg-[#1F2937] rounded-xl shadow-md dark:shadow-lg",
         "border border-[#E5E7EB] dark:border-[#4B5563] flex flex-col",
-        "aspect-square", // Make it square
+        "mobile-card", // CSS class from index.css
         "transition-all duration-300 hover:shadow-lg dark:hover:shadow-xl hover:-translate-y-1",
-        onClick && "cursor-pointer"
+        isMobile ? "p-4" : "p-5",
+        isMobile ? "" : "aspect-square", // Only make it square on larger screens
+        onClick && "cursor-pointer",
+        className
       )}
       onClick={onClick}
     >
       {/* Card Header */}
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <p className="text-sm font-medium text-[#6B7280] dark:text-gray-400">{title}</p>
-          {subtitle && <p className="text-xs text-[#4E4456] font-semibold mt-1">{subtitle}</p>}
+      <div className="flex justify-between items-start mb-3 md:mb-4">
+        <div className="pr-2">
+          <p className={cn(
+            "font-medium text-[#6B7280] dark:text-gray-400",
+            isMobile ? "text-xs" : "text-sm"
+          )}>
+            {title}
+          </p>
+          {subtitle && (
+            <p className={cn(
+              "text-[#4E4456] font-semibold mt-0.5 md:mt-1", 
+              isMobile ? "text-[10px]" : "text-xs"
+            )}>
+              {subtitle}
+            </p>
+          )}
         </div>
-        <div className={`p-3 rounded-xl ${iconBgColor} ${iconTextColor}`}>
-          {React.cloneElement(icon as React.ReactElement, { className: "h-6 w-6" })}
+        <div className={cn(
+          `rounded-xl ${iconBgColor} ${iconTextColor}`,
+          isMobile ? "p-2" : "p-3"
+        )}>
+          {React.cloneElement(
+            icon as React.ReactElement, 
+            { className: isMobile ? "h-4 w-4" : "h-6 w-6" }
+          )}
         </div>
       </div>
       
       {/* Card Value */}
-      <h3 className="text-3xl font-bold text-[#374151] dark:text-[#E5E7EB] mt-2">{value}</h3>
+      <h3 className={cn(
+        "font-bold text-[#374151] dark:text-[#E5E7EB] mt-1 md:mt-2",
+        isMobile ? "text-xl sm:text-2xl" : "text-3xl",
+        "mobile-card-value" // CSS class from index.css
+      )}>
+        {value}
+      </h3>
       
       {/* Card Footer */}
-      <div className="mt-auto pt-4 border-t border-[#E5E7EB] dark:border-[#4B5563]">
+      <div className={cn(
+        "mt-auto pt-3 md:pt-4 border-t border-[#E5E7EB] dark:border-[#4B5563]",
+        isMobile ? "mt-3" : ""
+      )}>
         <div className="flex items-center">
-          <span className={`text-xs font-semibold ${trendColorClass}`}>
+          <span className={cn(
+            `font-semibold ${trendColorClass}`,
+            isMobile ? "text-[10px]" : "text-xs"
+          )}>
             {isPositive ? '▲' : '▼'} {Math.abs(trend)}%
           </span>
-          <span className="text-xs text-[#6B7280] dark:text-gray-400 ml-2">{trendLabel}</span>
+          <span className={cn(
+            "text-[#6B7280] dark:text-gray-400 ml-2",
+            isMobile ? "text-[10px]" : "text-xs"
+          )}>
+            {trendLabel}
+          </span>
         </div>
       </div>
     </div>
