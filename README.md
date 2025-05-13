@@ -1,73 +1,76 @@
-# Welcome to your Lovable project
+# Muscat Bay Utility Dashboard
+
+A modern dashboard for monitoring and managing utilities at Muscat Bay, including water systems, electricity, STP plant, and contractor tracking.
+
+## Features
+
+- **Enhanced UI**: Modern dashboard with smooth animations and transitions
+- **Dark Mode Support**: Full dark mode implementation with proper color contrast
+- **Responsive Design**: Works on mobile, tablet, and desktop screens
+- **Interactive Charts**: Visualize utility usage data with Recharts
+- **Real-time Monitoring**: Track key metrics for all utility systems
+
+## Project Structure
+
+This project is built with:
+
+- **React**: Frontend library for building user interfaces
+- **TypeScript**: Type-safe JavaScript
+- **Vite**: Fast and lightweight development server and build tool
+- **shadcn/ui**: High-quality UI components
+- **Tailwind CSS**: Utility-first CSS framework
+- **Recharts**: Composable charting library for React
+
+## Recent Enhancements
+
+- **Custom Color Palette**: Implemented a consistent purple-themed color scheme
+- **Improved Dashboard Cards**: Enhanced cards with better styling and hover effects
+- **Advanced Charts**: Added sophisticated charts with better tooltips and responsive design
+- **Animations**: Added fade-in and hover animations for a more dynamic feel
+- **Date Formatting**: Updated chart date formats for better readability
+- **Custom Scrollbars**: Implemented styled scrollbars that work in both light and dark mode
+
+## Getting Started
+
+```sh
+# Clone the repository
+git clone https://github.com/ARahim900/mbdashboard.git
+
+# Navigate to the project directory
+cd mbdashboard
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+
+## Usage
+
+The dashboard provides an overview of key metrics for Muscat Bay's utilities:
+
+1. **Water System**: Monitor consumption and usage trends
+2. **Electricity System**: Track power consumption and identify optimization opportunities
+3. **STP Plant**: View efficiency metrics for sewage treatment
+4. **Contractor Tracker**: Manage active, pending, and completed contractor projects
+
+## Next Steps
+
+Future enhancements planned for the dashboard include:
+
+- User authentication system with role-based permissions
+- Data export features for reporting
+- Real-time notifications for critical metrics
+- Mobile app integration
+- Automated reporting system
+
+## License
+
+This project is private and intended for use by Muscat Bay utilities management only.
 
 ## Project info
 
 **URL**: https://lovable.dev/projects/a1b98de6-5027-4497-8b14-cd570d305984
 
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/a1b98de6-5027-4497-8b14-cd570d305984) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/a1b98de6-5027-4497-8b14-cd570d305984) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+For more information about editing and deploying this project, refer to the [original documentation](https://docs.lovable.dev/).
