@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -106,11 +105,88 @@
 
 /* Add custom classes for dashboard layout */
 @layer components {
+  /* Responsive grid layouts */
   .grid-dashboard {
     @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4;
   }
   
   .grid-dashboard-2col {
     @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+  }
+
+  /* Mobile-optimized chart container */
+  .chart-container {
+    @apply w-full overflow-x-auto overflow-y-hidden;
+    /* Allow horizontal scroll on small screens */
+    min-height: 250px;
+    max-height: 500px;
+  }
+
+  /* Mobile-friendly card styling */
+  .mobile-card {
+    @apply p-3 sm:p-4 md:p-6;
+  }
+
+  .mobile-card-title {
+    @apply text-base sm:text-lg font-semibold;
+  }
+
+  .mobile-card-value {
+    @apply text-2xl sm:text-3xl md:text-4xl font-bold;
+  }
+
+  /* Mobile-optimized data tables */
+  .mobile-table {
+    @apply overflow-x-auto -mx-4 sm:mx-0;
+  }
+
+  .mobile-table-inner {
+    @apply min-w-full whitespace-nowrap;
+  }
+
+  /* Mobile navigation */
+  .mobile-nav-overlay {
+    @apply fixed inset-0 bg-black/50 z-30 lg:hidden;
+  }
+
+  /* Responsive typography */
+  .text-responsive-title {
+    @apply text-xl sm:text-2xl md:text-3xl font-bold;
+  }
+
+  .text-responsive-subtitle {
+    @apply text-sm sm:text-base md:text-lg text-muted-foreground;
+  }
+
+  /* Touch-friendly interactive elements */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+}
+
+/* Custom scrollbar for better mobile experience */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted rounded-full;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-muted/50;
+}
+
+/* Safe area insets for mobile devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: min(0vmin, env(safe-area-inset-left));
+    padding-right: min(0vmin, env(safe-area-inset-right));
+    padding-bottom: min(0vmin, env(safe-area-inset-bottom));
   }
 }
