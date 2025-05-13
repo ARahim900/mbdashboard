@@ -1,0 +1,95 @@
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Custom hover effect for dashboard cards */
+.hover-scale {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Grid for dashboard cards */
+.grid-dashboard {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .grid-dashboard {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid-dashboard {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Recharts styling */
+.recharts-text.recharts-cartesian-axis-tick-value,
+.recharts-text.recharts-label {
+  fill: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.dark .recharts-text.recharts-cartesian-axis-tick-value,
+.dark .recharts-text.recharts-label {
+  fill: var(--color-text-muted);
+}
+
+/* Pie chart label styling */
+.recharts-pie-label-text {
+  fill: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: rgba(0,0,0,0.3);
+  stroke-width: 2px;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+}
+
+/* Legend text styling */
+.recharts-legend-item-text {
+  color: var(--color-text-muted) !important;
+  vertical-align: middle;
+  font-size: 0.75rem;
+}
