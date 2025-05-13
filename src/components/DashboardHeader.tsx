@@ -1,10 +1,9 @@
 
 import React, { useEffect, useState } from "react";
-import { Moon, Sun, Menu, ArrowLeft, Home } from "lucide-react";
+import { Moon, Sun, Menu, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
 
 interface DashboardHeaderProps {
   pageTitle: string;
@@ -20,8 +19,6 @@ export function DashboardHeader({
     toast
   } = useToast();
   const navigate = useNavigate();
-  const location = useLocation();
-  const isRootPath = location.pathname === "/";
 
   // Check system preference for dark mode
   useEffect(() => {
@@ -61,52 +58,23 @@ export function DashboardHeader({
     });
   };
   
-  return (
-    <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 md:px-6 bg-[#4E4456] text-white backdrop-blur-sm border-b">
+  return <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 md:px-6 bg-[#4E4456] text-white backdrop-blur-sm border-b">
       <div className="flex items-center space-x-3">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="md:hidden text-white hover:bg-white/10" 
-          onClick={onToggleSidebar} 
-          aria-label="Toggle sidebar"
-        >
+        <Button variant="ghost" size="icon" className="md:hidden text-white hover:bg-white/10" onClick={onToggleSidebar} aria-label="Toggle sidebar">
           <Menu className="h-5 w-5" />
         </Button>
         
-        {!isRootPath && (
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={handleBackClick} 
-            className="text-white hover:bg-white/10" 
-            aria-label="Back to dashboard"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        )}
+        <Button variant="ghost" size="icon" onClick={handleBackClick} className="text-white hover:bg-white/10" aria-label="Back to dashboard">
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
         
-        <div className="flex items-center">
-          {isRootPath && (
-            <span className={cn("mr-2 w-8 h-8 flex items-center justify-center rounded-lg bg-white/10")}>
-              <Home className="h-5 w-5" />
-            </span>
-          )}
-          <h1 className="text-xl font-semibold">{pageTitle}</h1>
-        </div>
+        <h1 className="text-xl font-semibold">{pageTitle}</h1>
       </div>
 
       <div className="flex items-center space-x-4">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={toggleDarkMode} 
-          className="rounded-full text-white hover:bg-white/10" 
-          aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-        >
+        <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="rounded-full text-white hover:bg-white/10" aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
           {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </Button>
       </div>
-    </header>
-  );
+    </header>;
 }

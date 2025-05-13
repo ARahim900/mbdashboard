@@ -63,15 +63,6 @@ const Index = () => {
     navigate(path);
     toast.info(`Navigating to ${path.slice(1)} management`);
   };
-  
-  const handleRefreshData = () => {
-    setIsLoading(true);
-    // Simulate data refresh
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success("Dashboard data refreshed!");
-    }, 800);
-  };
 
   return (
     <DashboardLayout>
@@ -80,19 +71,18 @@ const Index = () => {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 className="text-3xl font-bold tracking-tight text-[#374151] dark:text-white">Dashboard Overview</h2>
-            <p className="mt-1 text-sm text-[#6B7280] dark:text-gray-400">Welcome to Muscat Bay Assets & Operation dashboard.</p>
+            <p className="mt-1 text-sm text-[#6B7280] dark:text-gray-400">Welcome back! Here's what's happening today.</p>
           </div>
           
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-3">
             <Button 
               variant="outline" 
-              onClick={handleRefreshData}
-              disabled={isLoading}
+              onClick={() => toast.success("Dashboard data refreshed!")}
               className="flex items-center gap-2"
             >
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-              <span>{isLoading ? 'Refreshing...' : 'Refresh Data'}</span>
+              <RefreshCw className="h-4 w-4" />
+              <span>Refresh Data</span>
             </Button>
             <Button 
               className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] flex items-center gap-2"
