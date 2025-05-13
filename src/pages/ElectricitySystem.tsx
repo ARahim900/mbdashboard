@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState, useMemo, useCallback, useEffect } from "react";
 import {
@@ -117,7 +116,7 @@ const AssetKPICard = ({ type, name, consumption, change, count, bgColor, icon })
 };
 
 // Custom tooltip for chart components
-const CustomTooltip = ({ active, payload, label }: {active?: boolean, payload?: any[], label?: string}) => {
+const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-3 shadow-md rounded-md border border-gray-200">
@@ -132,9 +131,7 @@ const CustomTooltip = ({ active, payload, label }: {active?: boolean, payload?: 
               {entry.name}:
             </span>
             <span className="ml-2 font-medium">
-              {typeof entry.value === 'number' 
-                ? `${entry.value.toLocaleString()} ${entry.name.includes('Cost') ? 'OMR' : 'kWh'}`
-                : entry.value}
+              {entry.value.toLocaleString()} {entry.name.includes('Cost') ? 'OMR' : 'kWh'}
             </span>
           </div>
         ))}
@@ -167,21 +164,21 @@ const MuscatBayElectricalDashboard = () => {
   const getPercentChange = useCallback((current, previous) => {
     if (previous === 0) return "N/A";
     const change = ((current / previous - 1) * 100).toFixed(1);
-    return isNaN(parseFloat(change)) || !isFinite(parseFloat(change)) ? "N/A" : change;
+    return isNaN(change) || !isFinite(change) ? "N/A" : change;
   }, []);
 
   // Prepare chart data
   const chartData = useMemo(() => {
     return electricityData.summary.map(item => ({
       ...item,
-      totalCost: parseFloat((item.totalConsumption * 0.025).toFixed(2))
+      totalCost: (item.totalConsumption * 0.025).toFixed(2)
     }));
   }, []);
 
   const assetChartData = useMemo(() => {
     return electricityData.assetTypes.map(asset => ({
       ...asset,
-      cost: parseFloat((asset.totalConsumption * 0.025).toFixed(2))
+      cost: (asset.totalConsumption * 0.025).toFixed(2)
     }));
   }, []);
 
@@ -242,7 +239,7 @@ const MuscatBayElectricalDashboard = () => {
               </div>
               <div className="text-right">
                 <div className="text-sm text-gray-600">Total Cost</div>
-                <div className="text-xl font-bold text-green-600">OMR {parseFloat(currentMonthData.totalCost.toFixed(2))}</div>
+                <div className="text-xl font-bold text-green-600">OMR {currentMonthData.totalCost.toFixed(2)}</div>
               </div>
             </div>
           </div>
@@ -352,7 +349,7 @@ const MuscatBayElectricalDashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip />
                   <Legend />
                   <Bar dataKey="totalConsumption" name="Consumption (kWh)" fill={BASE_COLOR} />
                   <Bar dataKey="cost" name="Cost (OMR)" fill={SUCCESS_COLOR} />
@@ -405,7 +402,7 @@ const MuscatBayElectricalDashboard = () => {
                       {asset.totalConsumption.toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-green-600">
-                      {parseFloat((asset.totalConsumption * 0.025).toFixed(2))}
+                      {(asset.totalConsumption * 0.025).toFixed(2)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                       <div className="flex items-center justify-end">
@@ -424,14 +421,14 @@ const MuscatBayElectricalDashboard = () => {
               </tbody>
               <tfoot className="bg-gray-50">
                 <tr>
-                  <td colSpan={2} className="px-6 py-4 text-sm font-medium text-gray-900">
+                  <td colSpan="2" className="px-6 py-4 text-sm font-medium text-gray-900">
                     TOTAL
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
                     {currentMonthData.totalConsumption.toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-green-600">
-                    {parseFloat((currentMonthData.totalCost).toFixed(2))}
+                    {currentMonthData.totalCost.toFixed(2)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                     <div className="flex items-center justify-end">
