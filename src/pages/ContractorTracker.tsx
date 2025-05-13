@@ -1,6 +1,5 @@
 import React from 'react';
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell
@@ -9,9 +8,8 @@ import {
   FileText, Activity, ArrowDown, ArrowUp, RefreshCw, Download,
   Building2, CheckCircle2, AlertTriangle, XCircle, Calendar,
   DollarSign, Search, Filter, MoreVertical, Clock, Tag,
-  AlertCircle, TrendingUp, Package, Zap, Settings, ArrowLeft
+  AlertCircle, TrendingUp, Package, Zap, Settings
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 // Define the base color scheme
 const BASE_COLOR = '#4E4456';
@@ -61,7 +59,7 @@ const contractData = {
 };
 
 // KPI Card Component
-const ContractKPICard = ({ title, value, unit, change = "0", icon, bgColor, size, status = "Normal" }) => {
+const ContractKPICard = ({ title, value, unit, change, icon, bgColor, size, status }) => {
   const isPositive = parseFloat(change) >= 0;
   const Icon = icon;
   
@@ -138,7 +136,7 @@ const StatusBadge = ({ status }) => {
 };
 
 // Custom tooltip for charts
-const CustomTooltip = ({ active, payload, label }: {active?: boolean, payload?: any[], label?: string}) => {
+const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-3 shadow-md rounded-md border border-gray-200">
@@ -146,17 +144,13 @@ const CustomTooltip = ({ active, payload, label }: {active?: boolean, payload?: 
         {payload.map((entry, index) => (
           <div key={index} className="flex items-center justify-between mt-1">
             <span style={{ color: entry.color }} className="flex items-center">
-              <div
-                className="w-3 h-3 rounded-full mr-1"
-                style={{ backgroundColor: entry.color }}
-              ></div>
+              <div className="w-3 h-3 rounded-full mr-1" style={{ backgroundColor: entry.color }}></div>
               {entry.name}:
             </span>
             <span className="ml-2 font-medium">
-              {typeof entry.value === 'number' 
-                ? entry.value.toLocaleString() 
+              {typeof entry.value === 'number' && entry.name.includes('Value') 
+                ? `OMR ${entry.value.toLocaleString()}` 
                 : entry.value}
-              {entry.name.includes('Value') ? ' OMR' : ''}
             </span>
           </div>
         ))}
@@ -172,7 +166,6 @@ const MuscatBayContractTracker = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('contractor');
   const [activeTab, setActiveTab] = useState('overview');
-  const navigate = useNavigate();
 
   // Filter contracts based on status and search query
   const filteredContracts = useMemo(() => {
@@ -219,23 +212,10 @@ const MuscatBayContractTracker = () => {
       {/* Header */}
       <div className="bg-[#4E4456] text-white shadow-md">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="mr-2 text-white hover:bg-white/20" 
-              onClick={() => navigate('/')}
-              aria-label="Back to dashboard"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold">Muscat Bay Contract Tracker</h1>
-              <p className="text-gray-200 mt-1">
-                Comprehensive contract management and tracking system
-              </p>
-            </div>
-          </div>
+          <h1 className="text-2xl font-bold">Muscat Bay Contract Tracker</h1>
+          <p className="text-gray-200 mt-1">
+            Comprehensive contract management and tracking system
+          </p>
         </div>
       </div>
 
@@ -268,7 +248,6 @@ const MuscatBayContractTracker = () => {
                 title="Total Contracts"
                 value={statistics.totalContracts}
                 unit=""
-                change="0"
                 icon={FileText}
                 bgColor="border-blue-500"
                 size="large"
@@ -278,7 +257,6 @@ const MuscatBayContractTracker = () => {
                 title="Active Contracts"
                 value={statistics.activeContracts}
                 unit=""
-                change="0"
                 icon={CheckCircle2}
                 bgColor="border-green-500"
                 size="large"
@@ -288,17 +266,14 @@ const MuscatBayContractTracker = () => {
                 title="Total Annual Value"
                 value={`OMR ${(statistics.totalValue / 1000).toFixed(0)}k`}
                 unit=""
-                change="0"
                 icon={DollarSign}
                 bgColor="border-green-500"
                 size="large"
-                status="Normal"
               />
               <ContractKPICard
                 title="Expiring Soon"
                 value={statistics.expiringNext30Days}
                 unit="in 30 days"
-                change="0"
                 icon={AlertTriangle}
                 bgColor="border-amber-500"
                 size="large"
@@ -326,7 +301,7 @@ const MuscatBayContractTracker = () => {
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
-                      <Tooltip content={<CustomTooltip />} />
+                      <Tooltip />
                       <Legend />
                     </PieChart>
                   </ResponsiveContainer>
