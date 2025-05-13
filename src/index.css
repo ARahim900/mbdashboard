@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -50,11 +51,11 @@
  
     --radius: 0.5rem;
 
-    --sidebar: white;
-    --sidebar-foreground: var(--color-text-dark);
+    --sidebar: #4E4456;
+    --sidebar-foreground: var(--color-text-light);
     --sidebar-border: var(--color-border-light);
-    --sidebar-accent: var(--color-primary-light);
-    --sidebar-accent-foreground: var(--color-primary);
+    --sidebar-accent: var(--color-primary-dark);
+    --sidebar-accent-foreground: var(--color-text-light);
   }
  
   .dark {
