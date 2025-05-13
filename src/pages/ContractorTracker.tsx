@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { EnhancedDashboardCard } from '@/components/EnhancedDashboardCard';
@@ -219,7 +220,7 @@ const ContractorTracker = () => {
         </div>
 
         {/* Contractor Summary Cards */}
-        <div className="grid-dashboard">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <EnhancedDashboardCard
             title="Active Projects"
             subtitle="Ongoing"
