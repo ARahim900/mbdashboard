@@ -1,13 +1,15 @@
-
-import React from "react";
+import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { Droplet, Zap, Factory, Briefcase, LayoutDashboard, ChevronRight, ChevronLeft } from "lucide-react";
+import { Droplet, Zap, Factory, Briefcase, LayoutDashboard, ChevronRight, ChevronLeft, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface DashboardSidebarProps {
   collapsed: boolean;
   onToggle: () => void;
+  mobileOpen: boolean;
+  onMobileToggle: () => void;
 }
 
 interface NavItemProps {
@@ -15,6 +17,7 @@ interface NavItemProps {
   icon: React.ReactNode;
   label: string;
   collapsed: boolean;
+  onClick?: () => void;
   end?: boolean;
 }
 
@@ -23,13 +26,18 @@ const NavItem = ({
   icon,
   label,
   collapsed,
+  onClick,
   end = false
 }: NavItemProps) => {
-  return <NavLink to={to} end={end} className={({
-    isActive
-  }) => cn("flex items-center py-2 px-4 rounded-lg transition-all", 
-    isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground", 
-    collapsed && "justify-center px-3")}>
+  return <NavLink 
+    to={to} 
+    end={end} 
+    onClick={onClick}
+    className={({
+      isActive
+    }) => cn("flex items-center py-2 px-4 rounded-lg transition-all", 
+      isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground", 
+      collapsed && "justify-center px-3")}>
       <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10">
         {icon}
       </span>
@@ -41,9 +49,26 @@ const NavItem = ({
 
 export function DashboardSidebar({
   collapsed,
-  onToggle
+  onToggle,
+  mobileOpen,
+  onMobileToggle
 }: DashboardSidebarProps) {
-  return <aside className={cn("fixed top-0 left-0 h-screen bg-sidebar text-sidebar-foreground flex flex-col transition-all z-40 border-r border-sidebar-border", collapsed ? "w-16" : "w-64")}>
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  
+  // Auto-collapse sidebar on mobile screens
+  useEffect(() => {
+    if (!isDesktop && !collapsed) {
+      onToggle();
+    }
+  }, [isDesktop, collapsed, onToggle]);
+
+  // Desktop sidebar
+  const DesktopSidebar = (
+    <aside className={cn(
+      "fixed top-0 left-0 h-screen bg-sidebar text-sidebar-foreground flex flex-col transition-all z-40 border-r border-sidebar-border lg:block", 
+      collapsed ? "w-16" : "w-64",
+      !isDesktop && !mobileOpen && "hidden"
+    )}>
       <div className={cn("flex items-center h-20 px-4", collapsed ? "justify-center" : "justify-between")}>
         {!collapsed && <div>
             <h1 className="text-lg font-bold tracking-tight">
@@ -60,15 +85,15 @@ export function DashboardSidebar({
       </div>
       
       <nav className="flex-1 py-4 flex flex-col space-y-4 px-3">
-        <NavItem to="/" icon={<LayoutDashboard className="w-5 h-5" />} label="Dashboard" collapsed={collapsed} end />
+        <NavItem to="/" icon={<LayoutDashboard className="w-5 h-5" />} label="Dashboard" collapsed={collapsed} end onClick={!isDesktop ? onMobileToggle : undefined} />
         
-        <NavItem to="/water" icon={<Droplet className="w-5 h-5" />} label="Water System" collapsed={collapsed} />
+        <NavItem to="/water" icon={<Droplet className="w-5 h-5" />} label="Water System" collapsed={collapsed} onClick={!isDesktop ? onMobileToggle : undefined} />
         
-        <NavItem to="/electricity" icon={<Zap className="w-5 h-5" />} label="Electricity System" collapsed={collapsed} />
+        <NavItem to="/electricity" icon={<Zap className="w-5 h-5" />} label="Electricity System" collapsed={collapsed} onClick={!isDesktop ? onMobileToggle : undefined} />
         
-        <NavItem to="/stp" icon={<Factory className="w-5 h-5" />} label="STP Plant" collapsed={collapsed} />
+        <NavItem to="/stp" icon={<Factory className="w-5 h-5" />} label="STP Plant" collapsed={collapsed} onClick={!isDesktop ? onMobileToggle : undefined} />
         
-        <NavItem to="/contractor" icon={<Briefcase className="w-5 h-5" />} label="Contractor Tracker" collapsed={collapsed} />
+        <NavItem to="/contractor" icon={<Briefcase className="w-5 h-5" />} label="Contractor Tracker" collapsed={collapsed} onClick={!isDesktop ? onMobileToggle : undefined} />
       </nav>
       
       <div className="p-3">
@@ -76,5 +101,31 @@ export function DashboardSidebar({
           {collapsed ? <span className="text-xs">v1.0</span> : <span>Muscat Bay v1.0</span>}
         </div>
       </div>
-    </aside>;
+    </aside>
+  );
+
+  // Mobile overlay - shown when menu is opened on small screens
+  const MobileOverlay = mobileOpen && !isDesktop ? (
+    <div 
+      className="fixed inset-0 bg-black/50 z-30 lg:hidden transition-opacity" 
+      onClick={onMobileToggle}
+      aria-hidden="true"
+    />
+  ) : null;
+
+  return (
+    <>
+      {/* Mobile Menu Button - Only visible on small screens */}
+      <button 
+        className="fixed top-4 left-4 z-50 p-2 rounded-md bg-sidebar text-sidebar-foreground lg:hidden"
+        onClick={onMobileToggle}
+        aria-label={mobileOpen ? "Close menu" : "Open menu"}
+      >
+        {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+      </button>
+      
+      {MobileOverlay}
+      {DesktopSidebar}
+    </>
+  );
 }
