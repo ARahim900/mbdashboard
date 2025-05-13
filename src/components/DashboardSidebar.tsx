@@ -44,10 +44,15 @@ export function DashboardSidebar({
   onToggle
 }: DashboardSidebarProps) {
   return <aside className={cn("fixed top-0 left-0 h-screen bg-sidebar text-sidebar-foreground flex flex-col transition-all z-40 border-r border-sidebar-border", collapsed ? "w-16" : "w-64")}>
-      <div className={cn("flex items-center h-16 px-4", collapsed ? "justify-center" : "justify-between")}>
-        {!collapsed && <h1 className="text-lg font-bold tracking-tight">
-            UtilityPro
-        </h1>}
+      <div className={cn("flex items-center h-20 px-4", collapsed ? "justify-center" : "justify-between")}>
+        {!collapsed && <div>
+            <h1 className="text-lg font-bold tracking-tight">
+                Muscat Bay
+            </h1>
+            <p className="text-xs text-sidebar-foreground/70">
+                Assets & Operation
+            </p>
+        </div>}
         
         <Button variant="ghost" className={cn("p-1", collapsed ? "w-10 h-10" : "h-8 w-8")} onClick={onToggle} aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
           {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
@@ -68,7 +73,7 @@ export function DashboardSidebar({
       
       <div className="p-3">
         <div className={cn("rounded-lg py-2 px-4 bg-sidebar-accent/50 text-xs text-sidebar-foreground/80 flex items-center", collapsed ? "justify-center px-3" : "")}>
-          {collapsed ? <span className="text-xs">v1.0</span> : <span>UtilityPro v1.0</span>}
+          {collapsed ? <span className="text-xs">v1.0</span> : <span>Muscat Bay v1.0</span>}
         </div>
       </div>
     </aside>;
