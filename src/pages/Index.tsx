@@ -3,16 +3,22 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { DashboardCard } from "@/components/DashboardCard";
-import { DashboardChart } from "@/components/DashboardChart";
-import { Droplet, Zap, Factory, Briefcase } from "lucide-react";
+import { EnhancedDashboardCard } from "@/components/EnhancedDashboardCard";
+import { EnhancedDashboardChart } from "@/components/EnhancedDashboardChart";
+import { COLORS } from "@/lib/colors";
+import { Droplet, Zap, Factory, Briefcase, RefreshCw, FileText } from "lucide-react";
 import { toast } from "sonner";
 
 const Index = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   
   useEffect(() => {
+    // Check if dark mode is enabled
+    const darkModeEnabled = document.documentElement.classList.contains("dark");
+    setIsDarkMode(darkModeEnabled);
+    
     // Simulate data loading
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
@@ -21,25 +27,23 @@ const Index = () => {
     return () => clearTimeout(loadingTimeout);
   }, []);
 
-  // Mock data for charts
+  // Updated mock data for charts with months
   const waterUsageData = [
-    { name: "Jan", usage: 320 },
-    { name: "Feb", usage: 300 },
-    { name: "Mar", usage: 340 },
-    { name: "Apr", usage: 280 },
-    { name: "May", usage: 390 },
-    { name: "Jun", usage: 430 },
-    { name: "Jul", usage: 410 }
+    { name: "Nov '24", usage: 300 },
+    { name: "Dec '24", usage: 340 },
+    { name: "Jan '25", usage: 280 },
+    { name: "Feb '25", usage: 390 },
+    { name: "Mar '25", usage: 430 },
+    { name: "Apr '25", usage: 410 }
   ];
   
   const electricityUsageData = [
-    { name: "Jan", usage: 480 },
-    { name: "Feb", usage: 520 },
-    { name: "Mar", usage: 470 },
-    { name: "Apr", usage: 490 },
-    { name: "May", usage: 520 },
-    { name: "Jun", usage: 550 },
-    { name: "Jul", usage: 580 }
+    { name: "Nov '24", usage: 520 },
+    { name: "Dec '24", usage: 470 },
+    { name: "Jan '25", usage: 490 },
+    { name: "Feb '25", usage: 520 },
+    { name: "Mar '25", usage: 550 },
+    { name: "Apr '25", usage: 580 }
   ];
   
   const stpEfficiencyData = [
@@ -61,172 +65,173 @@ const Index = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 animate-fade-in">
+      <div className="space-y-8 animate-fade-in">
+        {/* Page Header */}
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <h2 className="text-3xl font-bold tracking-tight">Overview</h2>
-          <div className="flex flex-wrap gap-2">
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight text-[#374151] dark:text-white">Dashboard Overview</h2>
+            <p className="mt-1 text-sm text-[#6B7280] dark:text-gray-400">Welcome back! Here's what's happening today.</p>
+          </div>
+          
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-3">
             <Button 
               variant="outline" 
-              onClick={() => toast.success("Dashboard refreshed!")}
+              onClick={() => toast.success("Dashboard data refreshed!")}
+              className="flex items-center gap-2"
             >
-              Refresh Data
+              <RefreshCw className="h-4 w-4" />
+              <span>Refresh Data</span>
             </Button>
-            <Button>Generate Report</Button>
+            <Button 
+              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] flex items-center gap-2"
+            >
+              <FileText className="h-4 w-4" />
+              <span>Generate Report</span>
+            </Button>
           </div>
         </div>
 
         {/* System Summary Cards */}
         <div className="grid-dashboard">
           {/* Water System */}
-          <DashboardCard
+          <EnhancedDashboardCard
             title="Water System"
-            value={isLoading ? undefined : "43,500 L"}
-            icon={<Droplet className="h-4 w-4" />}
-            iconColor="bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
+            subtitle="Main Consumption"
+            value={isLoading ? "Loading..." : "43,500 L"}
+            icon={<Droplet />}
+            iconBgColor="bg-[var(--color-primary-light)]" 
+            iconTextColor="text-[var(--color-primary)]"
             trend={5.2}
             trendLabel="vs last month"
-            isLoading={isLoading}
-            footer={
-              <Button 
-                variant="ghost" 
-                className="w-full justify-start text-xs"
-                onClick={() => navigateToSystem('/water')}
-              >
-                View Details
-              </Button>
-            }
+            onClick={() => navigateToSystem('/water')}
           />
           
           {/* Electricity System */}
-          <DashboardCard
+          <EnhancedDashboardCard
             title="Electricity System"
-            value={isLoading ? undefined : "528 kWh"}
-            icon={<Zap className="h-4 w-4" />}
-            iconColor="bg-yellow-100 text-yellow-600 dark:bg-yellow-900 dark:text-yellow-300"
+            subtitle="Total Usage"
+            value={isLoading ? "Loading..." : "528 kWh"}
+            icon={<Zap />}
+            iconBgColor="bg-yellow-100 dark:bg-yellow-900/50" 
+            iconTextColor="text-yellow-600 dark:text-yellow-400"
             trend={2.7}
             trendLabel="vs last month"
-            isLoading={isLoading}
-            footer={
-              <Button 
-                variant="ghost" 
-                className="w-full justify-start text-xs"
-                onClick={() => navigateToSystem('/electricity')}
-              >
-                View Details
-              </Button>
-            }
+            onClick={() => navigateToSystem('/electricity')}
           />
           
           {/* STP Plant */}
-          <DashboardCard
+          <EnhancedDashboardCard
             title="STP Plant"
-            value={isLoading ? undefined : "85% Efficiency"}
-            icon={<Factory className="h-4 w-4" />}
-            iconColor="bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
+            subtitle="Overall Efficiency"
+            value={isLoading ? "Loading..." : "85% Efficiency"}
+            icon={<Factory />}
+            iconBgColor="bg-green-100 dark:bg-green-900/50" 
+            iconTextColor="text-green-600 dark:text-green-400"
             trend={-1.3}
             trendLabel="vs last month"
-            isLoading={isLoading}
-            footer={
-              <Button 
-                variant="ghost" 
-                className="w-full justify-start text-xs"
-                onClick={() => navigateToSystem('/stp')}
-              >
-                View Details
-              </Button>
-            }
+            onClick={() => navigateToSystem('/stp')}
           />
           
           {/* Contractor Tracker */}
-          <DashboardCard
+          <EnhancedDashboardCard
             title="Contractor Tracker"
-            value={isLoading ? undefined : "12 Active"}
-            icon={<Briefcase className="h-4 w-4" />}
-            iconColor="bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300"
+            subtitle="Current Projects"
+            value={isLoading ? "Loading..." : "12 Active"}
+            icon={<Briefcase />}
+            iconBgColor="bg-purple-100 dark:bg-purple-900/50" 
+            iconTextColor="text-purple-600 dark:text-purple-400"
             trend={3}
-            trendLabel="vs last month"
-            isLoading={isLoading}
-            footer={
-              <Button 
-                variant="ghost" 
-                className="w-full justify-start text-xs"
-                onClick={() => navigateToSystem('/contractor')}
-              >
-                View Details
-              </Button>
-            }
+            trendLabel="new this month"
+            onClick={() => navigateToSystem('/contractor')}
           />
         </div>
 
-        {/* Detailed Charts */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-          {/* Water Usage Chart */}
-          <Card className="animate-fade-in hover-scale">
-            <CardContent className="p-6">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-medium">Water Usage Trend</h3>
-                <Droplet className="h-5 w-5 text-blue-500" />
-              </div>
-              <DashboardChart 
-                type="line" 
-                data={waterUsageData} 
-                dataKeys={["usage"]} 
-                colors={["#60A5FA"]}
-                height={200} 
-              />
-            </CardContent>
-          </Card>
+        {/* Charts Section */}
+        <div className="space-y-6">
+          <h3 className="text-xl font-semibold text-[#374151] dark:text-white">System Analytics</h3>
           
-          {/* Electricity Usage Chart */}
-          <Card className="animate-fade-in hover-scale">
-            <CardContent className="p-6">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-medium">Electricity Usage Trend</h3>
-                <Zap className="h-5 w-5 text-yellow-500" />
-              </div>
-              <DashboardChart 
-                type="line" 
-                data={electricityUsageData} 
-                dataKeys={["usage"]}
-                colors={["#FBBF24"]}
-                height={200} 
-              />
-            </CardContent>
-          </Card>
-          
-          {/* STP Efficiency Chart */}
-          <Card className="animate-fade-in hover-scale">
-            <CardContent className="p-6">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-medium">STP Efficiency Metrics</h3>
-                <Factory className="h-5 w-5 text-green-500" />
-              </div>
-              <DashboardChart 
-                type="bar" 
-                data={stpEfficiencyData} 
-                dataKeys={["value"]}
-                colors={["#10B981"]}
-                height={200}
-              />
-            </CardContent>
-          </Card>
-          
-          {/* Contractor Status Chart */}
-          <Card className="animate-fade-in hover-scale">
-            <CardContent className="p-6">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-medium">Contractor Status</h3>
-                <Briefcase className="h-5 w-5 text-purple-500" />
-              </div>
-              <DashboardChart 
-                type="pie" 
-                data={contractorData} 
-                dataKeys={["value"]} 
-                colors={["#8B5CF6", "#A78BFA", "#C4B5FD"]}
-                height={200}
-              />
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Water Usage Chart */}
+            <Card className="animate-fade-in hover-scale">
+              <CardContent className="p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-[#374151] dark:text-white">Water Usage Trend (L)</h3>
+                  <div className="text-[var(--color-primary)]">
+                    <Droplet className="h-5 w-5" />
+                  </div>
+                </div>
+                <EnhancedDashboardChart 
+                  type="line" 
+                  data={waterUsageData} 
+                  dataKeys={["usage"]} 
+                  colors={[COLORS.primary]}
+                  height={250}
+                  isDarkMode={isDarkMode}
+                />
+              </CardContent>
+            </Card>
+            
+            {/* Electricity Usage Chart */}
+            <Card className="animate-fade-in hover-scale">
+              <CardContent className="p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-[#374151] dark:text-white">Electricity Usage Trend (kWh)</h3>
+                  <div className="text-[var(--color-accent-yellow)]">
+                    <Zap className="h-5 w-5" />
+                  </div>
+                </div>
+                <EnhancedDashboardChart 
+                  type="line" 
+                  data={electricityUsageData} 
+                  dataKeys={["usage"]} 
+                  colors={[COLORS.accentYellow]}
+                  height={250}
+                  isDarkMode={isDarkMode}
+                />
+              </CardContent>
+            </Card>
+            
+            {/* STP Efficiency Chart */}
+            <Card className="animate-fade-in hover-scale">
+              <CardContent className="p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-[#374151] dark:text-white">STP Efficiency Metrics (%)</h3>
+                  <div className="text-[var(--color-accent-green)]">
+                    <Factory className="h-5 w-5" />
+                  </div>
+                </div>
+                <EnhancedDashboardChart 
+                  type="bar" 
+                  data={stpEfficiencyData} 
+                  dataKeys={["value"]} 
+                  colors={[COLORS.accentGreen]}
+                  height={250}
+                  isDarkMode={isDarkMode}
+                />
+              </CardContent>
+            </Card>
+            
+            {/* Contractor Status Chart */}
+            <Card className="animate-fade-in hover-scale">
+              <CardContent className="p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-[#374151] dark:text-white">Contractor Status</h3>
+                  <div className="text-purple-500">
+                    <Briefcase className="h-5 w-5" />
+                  </div>
+                </div>
+                <EnhancedDashboardChart 
+                  type="pie" 
+                  data={contractorData} 
+                  dataKeys={["value"]} 
+                  colors={["#8B5CF6", COLORS.accentYellow, COLORS.accentGreen]} 
+                  height={250}
+                  isDarkMode={isDarkMode}
+                />
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </DashboardLayout>
