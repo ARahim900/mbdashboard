@@ -1,12 +1,15 @@
+
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Droplet, Zap, Factory, Briefcase, LayoutDashboard, ChevronRight, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+
 interface DashboardSidebarProps {
   collapsed: boolean;
   onToggle: () => void;
 }
+
 interface NavItemProps {
   to: string;
   icon: React.ReactNode;
@@ -14,6 +17,7 @@ interface NavItemProps {
   collapsed: boolean;
   end?: boolean;
 }
+
 const NavItem = ({
   to,
   icon,
@@ -23,13 +27,18 @@ const NavItem = ({
 }: NavItemProps) => {
   return <NavLink to={to} end={end} className={({
     isActive
-  }) => cn("flex items-center py-2 px-4 rounded-lg transition-all", isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground", collapsed && "justify-center px-3")}>
-      <span className="w-5 h-5">{icon}</span>
+  }) => cn("flex items-center py-2 px-4 rounded-lg transition-all", 
+    isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground", 
+    collapsed && "justify-center px-3")}>
+      <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10">
+        {icon}
+      </span>
       {!collapsed && <span className="ml-3 whitespace-nowrap overflow-hidden text-ellipsis">
           {label}
         </span>}
     </NavLink>;
 };
+
 export function DashboardSidebar({
   collapsed,
   onToggle
@@ -37,14 +46,15 @@ export function DashboardSidebar({
   return <aside className={cn("fixed top-0 left-0 h-screen bg-sidebar text-sidebar-foreground flex flex-col transition-all z-40 border-r border-sidebar-border", collapsed ? "w-16" : "w-64")}>
       <div className={cn("flex items-center h-16 px-4", collapsed ? "justify-center" : "justify-between")}>
         {!collapsed && <h1 className="text-lg font-bold tracking-tight">
-      </h1>}
+            UtilityPro
+        </h1>}
         
         <Button variant="ghost" className={cn("p-1", collapsed ? "w-10 h-10" : "h-8 w-8")} onClick={onToggle} aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
           {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
         </Button>
       </div>
       
-      <nav className="flex-1 py-6 flex flex-col space-y-2 px-3">
+      <nav className="flex-1 py-6 flex flex-col space-y-3 px-3">
         <NavItem to="/" icon={<LayoutDashboard className="w-5 h-5" />} label="Dashboard" collapsed={collapsed} end />
         
         <NavItem to="/water" icon={<Droplet className="w-5 h-5" />} label="Water System" collapsed={collapsed} />

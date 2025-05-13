@@ -103,3 +103,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Add custom classes for dashboard layout */
+@layer components {
+  .grid-dashboard {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4;
+  }
+  
+  .grid-dashboard-2col {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+  }
+}

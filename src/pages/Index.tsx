@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -92,7 +93,7 @@ const Index = () => {
           </div>
         </div>
 
-        {/* System Summary Cards */}
+        {/* System Summary Cards - Now using grid-dashboard class for 2x2 arrangement */}
         <div className="grid-dashboard">
           {/* Water System */}
           <EnhancedDashboardCard
@@ -151,7 +152,7 @@ const Index = () => {
         <div className="space-y-6">
           <h3 className="text-xl font-semibold text-[#374151] dark:text-white">System Analytics</h3>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid-dashboard-2col">
             {/* Water Usage Chart */}
             <Card className="animate-fade-in hover-scale">
               <CardContent className="p-6">
