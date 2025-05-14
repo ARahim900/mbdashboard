@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { ThemeProvider } from "@/lib/theme-context";
+import { ThemeProvider, useTheme, ThemeContext } from "@/lib/theme-context";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Loader2 } from "lucide-react";
 import Index from "./pages/Index";
@@ -18,7 +18,9 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Enhanced loading component with subtle animation
 const LoadingPage = () => {
-  const { isDarkMode } = React.useContext(ThemeProvider.Context);
+  // Using direct context for initial loading since useTheme hook might not be available yet
+  const context = React.useContext(ThemeContext);
+  const isDarkMode = context?.isDarkMode || false;
   
   return (
     <div className={`flex flex-col items-center justify-center h-screen ${
