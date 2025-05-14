@@ -43,11 +43,11 @@ export function DashboardHeader({
     });
   };
   
-  // Dynamically determine header colors based on theme
-  const headerBgClass = isDarkMode ? "bg-[#4E4456]/95 border-gray-700" : "bg-[#F4F2F5]/95 border-gray-200";
-  const textClass = isDarkMode ? "text-white" : "text-[#374151]";
-  const buttonHoverClass = isDarkMode ? "hover:bg-white/10" : "hover:bg-black/5";
-  const buttonTextClass = isDarkMode ? "text-white" : "text-gray-700";
+  // Use the fixed purple color regardless of theme
+  const headerBgClass = "bg-[#4E4456] border-gray-700";
+  const textClass = "text-white";
+  const buttonHoverClass = "hover:bg-white/10";
+  const buttonTextClass = "text-white";
   
   return (
     <header className={cn(
@@ -99,7 +99,7 @@ export function DashboardHeader({
                     className="h-8 w-8 p-0 ml-1"
                     aria-label="Page information"
                   >
-                    <Info className="h-4 w-4 text-gray-400" />
+                    <Info className="h-4 w-4 text-white/70" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="max-w-xs">
@@ -142,9 +142,7 @@ export function DashboardHeader({
           size="icon" 
           className={cn(
             "rounded-full", 
-            isDarkMode 
-              ? "bg-white/10 text-white hover:bg-white/20" 
-              : "bg-black/5 text-gray-700 hover:bg-black/10"
+            "bg-white/10 text-white hover:bg-white/20"
           )} 
           aria-label="User profile"
         >
