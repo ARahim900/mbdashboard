@@ -2,6 +2,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { COLORS } from "@/lib/colors";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useTheme } from "@/lib/theme-context";
 
 interface EnhancedDashboardCardProps {
   title: string;
@@ -32,16 +33,22 @@ export function EnhancedDashboardCard({
   const trendColorClass = isPositive ? 'text-[#10B981]' : 'text-[#F87171]';
   const isMobile = useMediaQuery("(max-width: 640px)");
   const isTablet = useMediaQuery("(max-width: 1024px)");
+  const { isDarkMode } = useTheme();
+  
+  // More consistent height management
+  const cardHeight = isMobile ? "min-h-[150px]" : isTablet ? "min-h-[180px]" : "aspect-square";
 
   return (
     <div 
       className={cn(
-        "bg-white dark:bg-[#1F2937] rounded-xl shadow-md dark:shadow-lg",
-        "border border-[#E5E7EB] dark:border-[#4B5563] flex flex-col",
-        "mobile-card", // CSS class from index.css
-        "transition-all duration-300 hover:shadow-lg dark:hover:shadow-xl hover:-translate-y-1",
+        "rounded-xl transition-all duration-300",
+        "flex flex-col border",
+        "hover:shadow-lg hover:-translate-y-1",
+        isDarkMode 
+          ? "bg-[#1F2937] border-[#4B5563] dark:shadow-lg dark:hover:shadow-xl" 
+          : "bg-white border-[#E5E7EB] shadow-md",
         isMobile ? "p-4" : isTablet ? "p-4" : "p-5",
-        isMobile ? "min-h-[150px]" : isTablet ? "min-h-[180px]" : "aspect-square", // Responsive height handling
+        cardHeight, // Responsive height handling
         onClick && "cursor-pointer",
         className
       )}
@@ -49,19 +56,28 @@ export function EnhancedDashboardCard({
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
       aria-label={onClick ? `View ${title} details` : undefined}
+      onKeyDown={(e) => {
+        // Accessibility: Handle keyboard activation
+        if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          onClick();
+        }
+      }}
     >
       {/* Card Header */}
       <div className="flex justify-between items-start mb-3 md:mb-4">
         <div className="pr-2">
           <p className={cn(
-            "font-medium text-[#6B7280] dark:text-gray-400",
+            "font-medium",
+            isDarkMode ? "text-gray-400" : "text-[#6B7280]",
             isMobile ? "text-xs" : "text-sm"
           )}>
             {title}
           </p>
           {subtitle && (
             <p className={cn(
-              "text-[#4E4456] dark:text-gray-300 font-semibold mt-0.5 md:mt-1", 
+              "font-semibold mt-0.5 md:mt-1", 
+              isDarkMode ? "text-gray-300" : "text-[#4E4456]",
               isMobile ? "text-[10px]" : "text-xs"
             )}>
               {subtitle}
@@ -74,23 +90,27 @@ export function EnhancedDashboardCard({
         )}>
           {React.cloneElement(
             icon as React.ReactElement, 
-            { className: isMobile ? "h-4 w-4" : "h-6 w-6", "aria-hidden": "true" }
+            { 
+              className: isMobile ? "h-4 w-4" : "h-6 w-6", 
+              "aria-hidden": "true" 
+            }
           )}
         </div>
       </div>
       
       {/* Card Value */}
       <h3 className={cn(
-        "font-bold text-[#374151] dark:text-[#E5E7EB] mt-1 md:mt-2",
-        isMobile ? "text-xl sm:text-2xl" : "text-3xl",
-        "mobile-card-value" // CSS class from index.css
+        "font-bold mt-1 md:mt-2 tracking-tight",
+        isDarkMode ? "text-[#E5E7EB]" : "text-[#374151]",
+        isMobile ? "text-xl sm:text-2xl" : "text-3xl"
       )}>
         {value}
       </h3>
       
       {/* Card Footer */}
       <div className={cn(
-        "mt-auto pt-3 md:pt-4 border-t border-[#E5E7EB] dark:border-[#4B5563]",
+        "mt-auto pt-3 md:pt-4 border-t",
+        isDarkMode ? "border-[#4B5563]" : "border-[#E5E7EB]",
         isMobile ? "mt-2" : "mt-auto"
       )}>
         <div className="flex items-center">
@@ -101,7 +121,8 @@ export function EnhancedDashboardCard({
             {isPositive ? '▲' : '▼'} {Math.abs(trend)}%
           </span>
           <span className={cn(
-            "text-[#6B7280] dark:text-gray-400 ml-2",
+            "ml-2",
+            isDarkMode ? "text-gray-400" : "text-[#6B7280]",
             isMobile ? "text-[10px]" : "text-xs"
           )}>
             {trendLabel}
