@@ -9,6 +9,7 @@ import {
   Recycle, Gauge, TrendingUp, Truck, PieChart, Droplet, Calendar,
   AlertCircle, CheckCircle2, Layers, Filter, Beaker, FlaskConical
 } from "lucide-react";
+import { DashboardLayout } from "../components/DashboardLayout";
 
 // Define the base color and generate a color palette
 const BASE_COLOR = '#4E4456';
@@ -346,379 +347,381 @@ const MuscatBayStpDashboard = () => {
   }, [currentMonthData, previousMonthData]);
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-12">
-      {/* Header */}
-      <div className="bg-[#4E4456] text-white shadow-md">
-        <div className="container mx-auto px-4 py-6">
-          <h1 className="text-2xl font-bold">Muscat Bay STP Plant</h1>
-          <p className="text-gray-200 mt-1">
-            Sewage Treatment Plant Operations & Performance Analytics
-          </p>
-          <div className="mt-2 text-sm text-gray-300">
-            Complete 11-month analysis (Jul 2024 - May 2025)
+    <DashboardLayout>
+      <div className="bg-gray-50 min-h-screen pb-12">
+        {/* Header */}
+        <div className="bg-[#4E4456] text-white shadow-md">
+          <div className="container mx-auto px-4 py-6">
+            <h1 className="text-2xl font-bold">Muscat Bay STP Plant</h1>
+            <p className="text-gray-200 mt-1">
+              Sewage Treatment Plant Operations & Performance Analytics
+            </p>
+            <div className="mt-2 text-sm text-gray-300">
+              Complete 11-month analysis (Jul 2024 - May 2025)
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="container mx-auto px-4 pt-6">
-        {/* Period Selector */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-          <h3 className="text-lg font-medium mb-4">Period Selection</h3>
-          <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-            {stpData.summary.map(period => (
-              <button
-                key={period.month}
-                onClick={() => setSelectedMonth(period.month)}
-                className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                  selectedMonth === period.month
-                    ? 'bg-[#4E4456] text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {period.month}
-              </button>
+        <div className="container mx-auto px-4 pt-6">
+          {/* Period Selector */}
+          <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+            <h3 className="text-lg font-medium mb-4">Period Selection</h3>
+            <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+              {stpData.summary.map(period => (
+                <button
+                  key={period.month}
+                  onClick={() => setSelectedMonth(period.month)}
+                  className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                    selectedMonth === period.month
+                      ? 'bg-[#4E4456] text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {period.month}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Key Performance Indicators */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            {updatedKpiMetrics.map((metric) => (
+              <StpKPICard
+                key={metric.name}
+                name={metric.name}
+                value={Number(metric.value)}
+                previous={Number(metric.previous)}
+                unit={metric.unit}
+                icon={metric.icon}
+                color={metric.color}
+                bgColor={`border-${metric.color.slice(1)}`}
+                target={metric.target}
+              />
             ))}
           </div>
-        </div>
 
-        {/* Key Performance Indicators */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          {updatedKpiMetrics.map((metric) => (
-            <StpKPICard
-              key={metric.name}
-              name={metric.name}
-              value={Number(metric.value)}
-              previous={Number(metric.previous)}
-              unit={metric.unit}
-              icon={metric.icon}
-              color={metric.color}
-              bgColor={`border-${metric.color.slice(1)}`}
-              target={metric.target}
-            />
-          ))}
-        </div>
-
-        {/* Process Operations Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          {updatedProcessMetrics.map((metric) => (
-            <ProcessMetricsCard
-              key={metric.name}
-              name={metric.name}
-              current={metric.current}
-              previous={metric.previous}
-              unit={metric.unit}
-              type={metric.type}
-              icon={metric.icon}
-              color={metric.color}
-            />
-          ))}
-        </div>
-
-        {/* Treatment Process Flow */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-lg font-medium text-gray-800 mb-4">Treatment Process Flow - {selectedMonth}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center">
-              <div className="text-sm text-gray-600 mb-1">Inlet Sewage</div>
-              <div className="text-2xl font-bold text-blue-600">{currentMonthData.inlet.toLocaleString()} m³</div>
-              <div className="text-xs text-gray-500 mt-1">Direct MB + {currentMonthData.tankers} Tankers</div>
-            </div>
-            <div className="text-center">
-              <div className="text-sm text-gray-600 mb-1">Treated Water</div>
-              <div className="text-2xl font-bold text-green-600">{currentMonthData.produced.toLocaleString()} m³</div>
-              <div className="text-xs text-gray-500 mt-1">{currentMonthData.efficiency}% efficiency</div>
-            </div>
-            <div className="text-center">
-              <div className="text-sm text-gray-600 mb-1">TSE to Irrigation</div>
-              <div className="text-2xl font-bold text-purple-600">{currentMonthData.toIrrigation.toLocaleString()} m³</div>
-              <div className="text-xs text-gray-500 mt-1">{currentMonthData.utilization}% utilization</div>
-            </div>
+          {/* Process Operations Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            {updatedProcessMetrics.map((metric) => (
+              <ProcessMetricsCard
+                key={metric.name}
+                name={metric.name}
+                current={metric.current}
+                previous={metric.previous}
+                unit={metric.unit}
+                type={metric.type}
+                icon={metric.icon}
+                color={metric.color}
+              />
+            ))}
           </div>
-        </div>
 
-        {/* Operational Insights */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          {stpData.operationalInsights.map((insight, index) => (
-            <OperationalInsightCard key={index} {...insight} />
-          ))}
-        </div>
-
-        {/* Treatment Trends Chart */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
-            <h2 className="text-lg font-medium text-gray-800">
-              STP Performance Trends (11 Months)
-            </h2>
-            <div className="flex space-x-2 mt-2 sm:mt-0">
-              <button
-                className="px-3 py-1.5 bg-gray-100 rounded-md flex items-center text-sm hover:bg-gray-200"
-                onClick={() => setActiveChartIndex((prev) => (prev + 1) % 3)}
-              >
-                <RefreshCw className="h-3.5 w-3.5 mr-1" />
-                <span>Switch View</span>
-              </button>
-              <button
-                className="px-3 py-1.5 bg-gray-100 rounded-md flex items-center text-sm hover:bg-gray-200"
-                onClick={() => window.alert('Chart downloaded')}
-              >
-                <Download className="h-3.5 w-3.5 mr-1" />
-                <span>Export</span>
-              </button>
+          {/* Treatment Process Flow */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-lg font-medium text-gray-800 mb-4">Treatment Process Flow - {selectedMonth}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center">
+                <div className="text-sm text-gray-600 mb-1">Inlet Sewage</div>
+                <div className="text-2xl font-bold text-blue-600">{currentMonthData.inlet.toLocaleString()} m³</div>
+                <div className="text-xs text-gray-500 mt-1">Direct MB + {currentMonthData.tankers} Tankers</div>
+              </div>
+              <div className="text-center">
+                <div className="text-sm text-gray-600 mb-1">Treated Water</div>
+                <div className="text-2xl font-bold text-green-600">{currentMonthData.produced.toLocaleString()} m³</div>
+                <div className="text-xs text-gray-500 mt-1">{currentMonthData.efficiency}% efficiency</div>
+              </div>
+              <div className="text-center">
+                <div className="text-sm text-gray-600 mb-1">TSE to Irrigation</div>
+                <div className="text-2xl font-bold text-purple-600">{currentMonthData.toIrrigation.toLocaleString()} m³</div>
+                <div className="text-xs text-gray-500 mt-1">{currentMonthData.utilization}% utilization</div>
+              </div>
             </div>
           </div>
 
-          <div style={{ height: 350 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              {activeChartIndex === 0 ? (
-                <ComposedChart data={stpData.summary}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis yAxisId="left" />
-                  <YAxis yAxisId="right" orientation="right" />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Legend />
-                  <Bar
-                    yAxisId="left"
-                    dataKey="inlet"
-                    name="Inlet Sewage (m³)"
-                    fill="#3B82F6"
-                    barSize={30}
-                  />
-                  <Bar
-                    yAxisId="left"
-                    dataKey="produced"
-                    name="Treated Water (m³)"
-                    fill="#10B981"
-                    barSize={30}
-                  />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="efficiency"
-                    name="Efficiency %"
-                    stroke="#EF4444"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                  />
-                </ComposedChart>
-              ) : activeChartIndex === 1 ? (
-                <AreaChart data={stpData.summary}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Area 
-                    type="monotone" 
-                    dataKey="toIrrigation" 
-                    stackId="1" 
-                    name="TSE to Irrigation (m³)" 
-                    stroke="#8B5CF6" 
-                    fill="#8B5CF6"
-                    fillOpacity={0.7}
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="utilization" 
-                    stackId="2" 
-                    name="TSE Utilization %" 
-                    stroke="#F59E0B" 
-                    fill="#F59E0B"
-                    fillOpacity={0.7}
-                  />
-                </AreaChart>
-              ) : (
-                <LineChart data={stpData.summary}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="tankers" 
-                    name="Tankers Discharged" 
-                    stroke="#3B82F6" 
-                    strokeWidth={2}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="avgDailyProduction" 
-                    name="Daily Production (m³)" 
-                    stroke="#10B981" 
-                    strokeWidth={2}
-                  />
-                </LineChart>
-              )}
-            </ResponsiveContainer>
+          {/* Operational Insights */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            {stpData.operationalInsights.map((insight, index) => (
+              <OperationalInsightCard key={index} {...insight} />
+            ))}
           </div>
-        </div>
 
-        {/* Performance Summary Table */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-lg font-medium text-gray-800 mb-4">Comprehensive Performance Summary</h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Month
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tankers
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Inlet (m³)
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Produced (m³)
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    To Irrigation (m³)
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Efficiency %
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Utilization %
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Daily Avg.
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {stpData.summary.map((item) => (
-                  <tr key={item.month} className={item.month === selectedMonth ? 'bg-blue-50' : 'hover:bg-gray-50'}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {item.month}
+          {/* Treatment Trends Chart */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+              <h2 className="text-lg font-medium text-gray-800">
+                STP Performance Trends (11 Months)
+              </h2>
+              <div className="flex space-x-2 mt-2 sm:mt-0">
+                <button
+                  className="px-3 py-1.5 bg-gray-100 rounded-md flex items-center text-sm hover:bg-gray-200"
+                  onClick={() => setActiveChartIndex((prev) => (prev + 1) % 3)}
+                >
+                  <RefreshCw className="h-3.5 w-3.5 mr-1" />
+                  <span>Switch View</span>
+                </button>
+                <button
+                  className="px-3 py-1.5 bg-gray-100 rounded-md flex items-center text-sm hover:bg-gray-200"
+                  onClick={() => window.alert('Chart downloaded')}
+                >
+                  <Download className="h-3.5 w-3.5 mr-1" />
+                  <span>Export</span>
+                </button>
+              </div>
+            </div>
+
+            <div style={{ height: 350 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                {activeChartIndex === 0 ? (
+                  <ComposedChart data={stpData.summary}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis yAxisId="left" />
+                    <YAxis yAxisId="right" orientation="right" />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+                    <Bar
+                      yAxisId="left"
+                      dataKey="inlet"
+                      name="Inlet Sewage (m³)"
+                      fill="#3B82F6"
+                      barSize={30}
+                    />
+                    <Bar
+                      yAxisId="left"
+                      dataKey="produced"
+                      name="Treated Water (m³)"
+                      fill="#10B981"
+                      barSize={30}
+                    />
+                    <Line
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="efficiency"
+                      name="Efficiency %"
+                      stroke="#EF4444"
+                      strokeWidth={2}
+                      dot={{ r: 4 }}
+                    />
+                  </ComposedChart>
+                ) : activeChartIndex === 1 ? (
+                  <AreaChart data={stpData.summary}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Area 
+                      type="monotone" 
+                      dataKey="toIrrigation" 
+                      stackId="1" 
+                      name="TSE to Irrigation (m³)" 
+                      stroke="#8B5CF6" 
+                      fill="#8B5CF6"
+                      fillOpacity={0.7}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="utilization" 
+                      stackId="2" 
+                      name="TSE Utilization %" 
+                      stroke="#F59E0B" 
+                      fill="#F59E0B"
+                      fillOpacity={0.7}
+                    />
+                  </AreaChart>
+                ) : (
+                  <LineChart data={stpData.summary}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line 
+                      type="monotone" 
+                      dataKey="tankers" 
+                      name="Tankers Discharged" 
+                      stroke="#3B82F6" 
+                      strokeWidth={2}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="avgDailyProduction" 
+                      name="Daily Production (m³)" 
+                      stroke="#10B981" 
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                )}
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Performance Summary Table */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-lg font-medium text-gray-800 mb-4">Comprehensive Performance Summary</h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Month
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Tankers
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Inlet (m³)
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Produced (m³)
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      To Irrigation (m³)
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Efficiency %
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Utilization %
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Daily Avg.
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {stpData.summary.map((item) => (
+                    <tr key={item.month} className={item.month === selectedMonth ? 'bg-blue-50' : 'hover:bg-gray-50'}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {item.month}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
+                        {item.tankers}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
+                        {item.inlet.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
+                        {item.produced.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
+                        {item.toIrrigation.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                        <span className={`font-medium ${
+                          item.efficiency > 110 ? 'text-green-600' :
+                          item.efficiency > 100 ? 'text-amber-600' :
+                          'text-red-600'
+                        }`}>
+                          {item.efficiency}%
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                        <span className={`font-medium ${
+                          item.utilization > 85 ? 'text-green-600' :
+                          item.utilization > 80 ? 'text-amber-600' :
+                          'text-red-600'
+                        }`}>
+                          {item.utilization}%
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
+                        {item.avgDailyProduction}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot className="bg-gray-50">
+                  <tr>
+                    <td className="px-6 py-4 text-sm font-bold text-gray-900">
+                      AVERAGE
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
-                      {item.tankers}
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
+                      {Math.round(stpData.summary.reduce((sum, m) => sum + m.tankers, 0) / stpData.summary.length)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
-                      {item.inlet.toLocaleString()}
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
+                      {Math.round(stpData.summary.reduce((sum, m) => sum + m.inlet, 0) / stpData.summary.length).toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
-                      {item.produced.toLocaleString()}
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
+                      {Math.round(stpData.summary.reduce((sum, m) => sum + m.produced, 0) / stpData.summary.length).toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
-                      {item.toIrrigation.toLocaleString()}
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
+                      {Math.round(stpData.summary.reduce((sum, m) => sum + m.toIrrigation, 0) / stpData.summary.length).toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                      <span className={`font-medium ${
-                        item.efficiency > 110 ? 'text-green-600' :
-                        item.efficiency > 100 ? 'text-amber-600' :
-                        'text-red-600'
-                      }`}>
-                        {item.efficiency}%
-                      </span>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
+                      {(stpData.summary.reduce((sum, m) => sum + m.efficiency, 0) / stpData.summary.length).toFixed(1)}%
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                      <span className={`font-medium ${
-                        item.utilization > 85 ? 'text-green-600' :
-                        item.utilization > 80 ? 'text-amber-600' :
-                        'text-red-600'
-                      }`}>
-                        {item.utilization}%
-                      </span>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
+                      {(stpData.summary.reduce((sum, m) => sum + m.utilization, 0) / stpData.summary.length).toFixed(1)}%
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500">
-                      {item.avgDailyProduction}
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
+                      {Math.round(stpData.summary.reduce((sum, m) => sum + m.avgDailyProduction, 0) / stpData.summary.length)}
                     </td>
                   </tr>
-                ))}
-              </tbody>
-              <tfoot className="bg-gray-50">
-                <tr>
-                  <td className="px-6 py-4 text-sm font-bold text-gray-900">
-                    AVERAGE
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
-                    {Math.round(stpData.summary.reduce((sum, m) => sum + m.tankers, 0) / stpData.summary.length)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
-                    {Math.round(stpData.summary.reduce((sum, m) => sum + m.inlet, 0) / stpData.summary.length).toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
-                    {Math.round(stpData.summary.reduce((sum, m) => sum + m.produced, 0) / stpData.summary.length).toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
-                    {Math.round(stpData.summary.reduce((sum, m) => sum + m.toIrrigation, 0) / stpData.summary.length).toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
-                    {(stpData.summary.reduce((sum, m) => sum + m.efficiency, 0) / stpData.summary.length).toFixed(1)}%
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
-                    {(stpData.summary.reduce((sum, m) => sum + m.utilization, 0) / stpData.summary.length).toFixed(1)}%
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-bold text-gray-900">
-                    {Math.round(stpData.summary.reduce((sum, m) => sum + m.avgDailyProduction, 0) / stpData.summary.length)}
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
+                </tfoot>
+              </table>
+            </div>
           </div>
-        </div>
 
-        {/* Strategic Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-md p-4">
-            <h3 className="text-blue-800 font-medium mb-3">Plant Performance</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-blue-600">11-Month Avg Efficiency</span>
-                <span className="font-bold text-blue-900">110.0%</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-blue-600">Peak Month</span>
-                <span className="font-bold text-blue-900">Apr-25</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-blue-600">Total Processed</span>
-                <span className="font-bold text-blue-900">179k m³</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg shadow-md p-4">
-            <h3 className="text-green-800 font-medium mb-3">TSE Utilization</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-green-600">Avg Utilization</span>
-                <span className="font-bold text-green-900">86.2%</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-green-600">Best Month</span>
-                <span className="font-bold text-green-900">May-25</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-green-600">Total to Irrigation</span>
-                <span className="font-bold text-green-900">154k m³</span>
+          {/* Strategic Overview */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-md p-4">
+              <h3 className="text-blue-800 font-medium mb-3">Plant Performance</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-blue-600">11-Month Avg Efficiency</span>
+                  <span className="font-bold text-blue-900">110.0%</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-blue-600">Peak Month</span>
+                  <span className="font-bold text-blue-900">Apr-25</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-blue-600">Total Processed</span>
+                  <span className="font-bold text-blue-900">179k m³</span>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg shadow-md p-4">
-            <h3 className="text-purple-800 font-medium mb-3">Operations Summary</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-purple-600">Total Tankers</span>
-                <span className="font-bold text-purple-900">2,476</span>
+            
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg shadow-md p-4">
+              <h3 className="text-green-800 font-medium mb-3">TSE Utilization</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-green-600">Avg Utilization</span>
+                  <span className="font-bold text-green-900">86.2%</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-green-600">Best Month</span>
+                  <span className="font-bold text-green-900">May-25</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-green-600">Total to Irrigation</span>
+                  <span className="font-bold text-green-900">154k m³</span>
+                </div>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-purple-600">Monthly Average</span>
-                <span className="font-bold text-purple-900">225 tankers</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-purple-600">Daily Production</span>
-                <span className="font-bold text-purple-900">593 m³/day</span>
+            </div>
+            
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg shadow-md p-4">
+              <h3 className="text-purple-800 font-medium mb-3">Operations Summary</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-purple-600">Total Tankers</span>
+                  <span className="font-bold text-purple-900">2,476</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-purple-600">Monthly Average</span>
+                  <span className="font-bold text-purple-900">225 tankers</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-purple-600">Daily Production</span>
+                  <span className="font-bold text-purple-900">593 m³/day</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 
