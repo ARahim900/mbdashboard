@@ -44,7 +44,7 @@ export function DashboardHeader({
   };
   
   // Use the fixed purple color regardless of theme
-  const headerBgClass = "bg-[#4E4456] border-gray-700";
+  const headerBgClass = "bg-[#4E4456] border-white/10";
   const textClass = "text-white";
   const buttonHoverClass = "hover:bg-white/10";
   const buttonTextClass = "text-white";
@@ -52,15 +52,15 @@ export function DashboardHeader({
   return (
     <header className={cn(
       "sticky top-0 z-30 flex items-center justify-between h-16 px-4 md:px-6",
-      "border-b backdrop-blur-sm transition-colors duration-300",
+      "border-b backdrop-blur-sm transition-colors duration-300 shadow-sm",
       headerBgClass, textClass
     )}>
-      <div className="flex items-center space-x-2 md:space-x-3">
+      <div className="flex items-center space-x-3 md:space-x-4">
         {/* Sidebar toggle button - visible on all screen sizes but styled differently */}
         <Button 
           variant="ghost" 
           size="icon" 
-          className={cn(buttonTextClass, buttonHoverClass)} 
+          className={cn(buttonTextClass, buttonHoverClass, "rounded-full")} 
           onClick={onToggleSidebar} 
           aria-label="Toggle sidebar"
         >
@@ -73,7 +73,7 @@ export function DashboardHeader({
             variant="ghost" 
             size="icon" 
             onClick={handleBackClick} 
-            className={cn(buttonTextClass, buttonHoverClass)} 
+            className={cn(buttonTextClass, buttonHoverClass, "rounded-full")} 
             aria-label="Back to dashboard"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -83,8 +83,8 @@ export function DashboardHeader({
         {/* Page title with optional help tooltip */}
         <div className="flex items-center">
           <h1 className={cn(
-            "font-semibold truncate", 
-            isMobile ? "text-sm max-w-[150px]" : "text-xl"
+            "font-semibold tracking-tight", 
+            isMobile ? "text-base max-w-[150px]" : "text-xl"
           )}>
             {pageTitle}
           </h1>
@@ -111,7 +111,7 @@ export function DashboardHeader({
         </div>
       </div>
 
-      <div className="flex items-center space-x-1 md:space-x-2">
+      <div className="flex items-center space-x-2 md:space-x-3">
         {/* Notification button - hidden on mobile */}
         {!isMobile && (
           <Button 
