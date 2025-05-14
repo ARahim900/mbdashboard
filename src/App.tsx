@@ -3,9 +3,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@/lib/theme-context";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { Loader2 } from "lucide-react";
 import Index from "./pages/Index";
 
 // Lazy load other pages for better performance
@@ -15,23 +16,97 @@ const StpPlant = lazy(() => import("./pages/StpPlant"));
 const ContractorTracker = lazy(() => import("./pages/ContractorTracker"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-// Loading component for suspense fallback
-const LoadingPage = () => (
-  <div className="flex items-center justify-center h-screen bg-white dark:bg-gray-900">
-    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-  </div>
-);
+// Enhanced loading component with subtle animation
+const LoadingPage = () => {
+  const { isDarkMode } = React.useContext(ThemeProvider.Context);
+  
+  return (
+    <div className={`flex flex-col items-center justify-center h-screen ${
+      isDarkMode ? 'bg-[#111827] text-white' : 'bg-white text-gray-800'
+    }`}>
+      <Loader2 className="h-12 w-12 animate-spin text-[#4E4456]" aria-hidden="true" />
+      <p className="mt-4 font-medium">Loading...</p>
+    </div>
+  );
+};
 
-// Create query client with default options
+// Route-level error boundary component
+const RouteErrorBoundary = ({ children }: { children: React.ReactNode }) => {
+  // Use location to get current route information for better error context
+  const location = useLocation();
+  
+  return (
+    <ErrorBoundary 
+      onReset={() => {
+        // You could redirect to home or reload the page on error
+        window.location.href = '/';
+      }}
+    >
+      {children}
+    </ErrorBoundary>
+  );
+};
+
+// Create query client with optimized options
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
       staleTime: 5 * 60 * 1000, // 5 minutes
+      cacheTime: 10 * 60 * 1000, // 10 minutes
+      refetchOnMount: 'always',
+      suspense: false, // Don't use React Suspense for data fetching
     },
   },
 });
+
+const AppRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/" element={
+        <RouteErrorBoundary>
+          <Index />
+        </RouteErrorBoundary>
+      } />
+      <Route path="/water" element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<LoadingPage />}>
+            <WaterSystem />
+          </Suspense>
+        </RouteErrorBoundary>
+      } />
+      <Route path="/electricity" element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<LoadingPage />}>
+            <ElectricitySystem />
+          </Suspense>
+        </RouteErrorBoundary>
+      } />
+      <Route path="/stp" element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<LoadingPage />}>
+            <StpPlant />
+          </Suspense>
+        </RouteErrorBoundary>
+      } />
+      <Route path="/contractor" element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<LoadingPage />}>
+            <ContractorTracker />
+          </Suspense>
+        </RouteErrorBoundary>
+      } />
+      <Route path="*" element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<LoadingPage />}>
+            <NotFound />
+          </Suspense>
+        </RouteErrorBoundary>
+      } />
+    </Routes>
+  );
+};
 
 const App = () => (
   <ErrorBoundary>
@@ -41,34 +116,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/water" element={
-                <Suspense fallback={<LoadingPage />}>
-                  <WaterSystem />
-                </Suspense>
-              } />
-              <Route path="/electricity" element={
-                <Suspense fallback={<LoadingPage />}>
-                  <ElectricitySystem />
-                </Suspense>
-              } />
-              <Route path="/stp" element={
-                <Suspense fallback={<LoadingPage />}>
-                  <StpPlant />
-                </Suspense>
-              } />
-              <Route path="/contractor" element={
-                <Suspense fallback={<LoadingPage />}>
-                  <ContractorTracker />
-                </Suspense>
-              } />
-              <Route path="*" element={
-                <Suspense fallback={<LoadingPage />}>
-                  <NotFound />
-                </Suspense>
-              } />
-            </Routes>
+            <AppRoutes />
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>
