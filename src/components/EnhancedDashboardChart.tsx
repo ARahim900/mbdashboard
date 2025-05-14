@@ -13,14 +13,16 @@ import {
   Legend, 
   ResponsiveContainer,
   Cell,
-  TooltipProps
+  TooltipProps,
+  Area,
+  AreaChart
 } from "recharts";
 import { COLORS } from "@/lib/colors";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useTheme } from "@/lib/theme-context";
 
 interface EnhancedDashboardChartProps {
-  type: "line" | "bar" | "pie";
+  type: "line" | "bar" | "pie" | "area";
   data: any[];
   dataKeys: string[];
   colors: string[];
@@ -172,8 +174,8 @@ export function EnhancedDashboardChart({
   const margin = chartUtils.getMargin(isMobile, isTablet);
   
   // Helper functions for chart styling based on dark mode
-  const getChartStrokeColor = () => isDarkMode ? COLORS.borderDark : COLORS.borderLight;
-  const getChartTextColor = () => isDarkMode ? COLORS.textLight : COLORS.textMuted;
+  const getChartStrokeColor = () => isDarkMode ? '#374151' : '#E5E7EB';
+  const getChartTextColor = () => isDarkMode ? '#E5E7EB' : '#6B7280';
     
   // Limit number of data points on small screens
   const limitDataForMobile = (originalData: any[]) => {
@@ -185,7 +187,7 @@ export function EnhancedDashboardChart({
   };
 
   // Displayed data with mobile optimization
-  const displayData = isMobile && (type === 'line' || type === 'bar') 
+  const displayData = isMobile && (type === 'line' || type === 'bar' || type === 'area') 
     ? limitDataForMobile(data) 
     : data;
 
@@ -195,7 +197,7 @@ export function EnhancedDashboardChart({
       case "line":
         return (
           <LineChart data={displayData} margin={margin}>
-            <CartesianGrid strokeDasharray="3 3" stroke={getChartStrokeColor()} opacity={0.5} />
+            <CartesianGrid strokeDasharray="3 3" stroke={getChartStrokeColor()} opacity={0.3} />
             <XAxis 
               dataKey="name" 
               stroke={getChartTextColor()} 
@@ -232,23 +234,80 @@ export function EnhancedDashboardChart({
                 name={key}
                 stroke={colors[index % colors.length]} 
                 strokeWidth={strokeWidth} 
-                dot={{ r: dotRadius, fill: colors[index % colors.length] }} 
+                dot={{ r: dotRadius, fill: colors[index % colors.length], strokeWidth: 1, stroke: 'white' }} 
                 activeDot={{ 
                   r: activeDotRadius, 
-                  stroke: isDarkMode ? COLORS.bgDarkElevated : 'white', 
+                  stroke: isDarkMode ? '#1F2937' : 'white', 
                   strokeWidth: 2, 
                   fill: colors[index % colors.length] 
                 }}
                 connectNulls={true} // Connect over missing data points
+                animationDuration={1500}
               />
             ))}
           </LineChart>
         );
       
+      case "area":
+        return (
+          <AreaChart data={displayData} margin={margin}>
+            <defs>
+              {dataKeys.map((key, index) => (
+                <linearGradient key={key} id={`color-${key}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={colors[index % colors.length]} stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor={colors[index % colors.length]} stopOpacity={0.1}/>
+                </linearGradient>
+              ))}
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke={getChartStrokeColor()} opacity={0.3} />
+            <XAxis 
+              dataKey="name" 
+              stroke={getChartTextColor()} 
+              fontSize={fontSize} 
+              tickLine={false} 
+              axisLine={false}
+              tick={{ fontSize }}
+              tickMargin={5}
+              tickFormatter={tickFormatter}
+            />
+            <YAxis 
+              stroke={getChartTextColor()} 
+              fontSize={fontSize} 
+              tickLine={false} 
+              axisLine={false}
+              tick={{ fontSize }}
+              tickCount={isMobile ? 4 : 5}
+            />
+            <Tooltip content={<CustomTooltip units={units} />} />
+            {!hideLegend && (!isMobile || !isTablet) && (
+              <Legend 
+                formatter={legendFormatter}
+                iconSize={isMobile ? 8 : 10} 
+                wrapperStyle={{ fontSize }}
+                verticalAlign={isMobile ? "bottom" : "top"}
+                align="center"
+              />
+            )}
+            {dataKeys.map((key, index) => (
+              <Area 
+                key={key}
+                type="monotone" 
+                dataKey={key} 
+                name={key}
+                stroke={colors[index % colors.length]} 
+                strokeWidth={2}
+                fill={`url(#color-${key})`}
+                activeDot={{ r: 6 }}
+                animationDuration={1500}
+              />
+            ))}
+          </AreaChart>
+        );
+
       case "bar":
         return (
           <BarChart data={displayData} margin={margin}>
-            <CartesianGrid strokeDasharray="3 3" stroke={getChartStrokeColor()} opacity={0.5} />
+            <CartesianGrid strokeDasharray="3 3" stroke={getChartStrokeColor()} opacity={0.3} />
             <XAxis 
               dataKey="name" 
               stroke={getChartTextColor()} 
@@ -285,7 +344,22 @@ export function EnhancedDashboardChart({
                 fill={colors[index % colors.length]} 
                 radius={[4, 4, 0, 0]} 
                 barSize={barSize}
-              />
+                animationDuration={1500}
+              >
+                {/* Add gradient to bars */}
+                <defs>
+                  <linearGradient id={`colorBar${index}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={colors[index % colors.length]} stopOpacity={1} />
+                    <stop offset="100%" stopColor={colors[index % colors.length]} stopOpacity={0.6} />
+                  </linearGradient>
+                </defs>
+                {displayData.map((entry, entryIndex) => (
+                  <Cell 
+                    key={`cell-${entryIndex}`}
+                    fill={`url(#colorBar${index})`} 
+                  />
+                ))}
+              </Bar>
             ))}
           </BarChart>
         );
@@ -303,12 +377,13 @@ export function EnhancedDashboardChart({
               nameKey="name"
               labelLine={!isMobile}
               label={isMobile ? false : ({ percent }) => `${(percent * 100).toFixed(0)}%`}
+              animationDuration={1500}
             >
               {data.map((entry, index) => (
                 <Cell 
                   key={`cell-${index}`} 
                   fill={colors[index % colors.length]} 
-                  stroke={isDarkMode ? COLORS.bgDarkElevated : 'white'} 
+                  stroke={isDarkMode ? '#1F2937' : 'white'} 
                   strokeWidth={isMobile ? 2 : 3} 
                 />
               ))}
