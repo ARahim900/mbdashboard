@@ -1,5 +1,5 @@
 import React from "react";
-import { Menu, ArrowLeft, User, Bell } from "lucide-react";
+import { Menu, ArrowLeft, User, Bell, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -7,15 +7,25 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/lib/theme-context";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface DashboardHeaderProps {
   pageTitle: string;
   onToggleSidebar: () => void;
+  showBackButton?: boolean;
+  helpTooltip?: string;
 }
 
 export function DashboardHeader({
   pageTitle,
-  onToggleSidebar
+  onToggleSidebar,
+  showBackButton = true,
+  helpTooltip
 }: DashboardHeaderProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -33,56 +43,83 @@ export function DashboardHeader({
     });
   };
   
+  // Dynamically determine header colors based on theme
+  const headerBgClass = isDarkMode ? "bg-[#4E4456]/95 border-gray-700" : "bg-[#F4F2F5]/95 border-gray-200";
+  const textClass = isDarkMode ? "text-white" : "text-[#374151]";
+  const buttonHoverClass = isDarkMode ? "hover:bg-white/10" : "hover:bg-black/5";
+  const buttonTextClass = isDarkMode ? "text-white" : "text-gray-700";
+  
   return (
     <header className={cn(
       "sticky top-0 z-30 flex items-center justify-between h-16 px-4 md:px-6",
       "border-b backdrop-blur-sm transition-colors duration-300",
-      isDarkMode 
-        ? "bg-[#4E4456] text-white border-gray-700" 
-        : "bg-[#F4F2F5] text-[#374151] border-gray-200"
+      headerBgClass, textClass
     )}>
       <div className="flex items-center space-x-2 md:space-x-3">
-        {/* On small screens, sidebar toggle is handled by mobile menu button in DashboardSidebar */}
-        {isDesktop && (
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className={isDarkMode ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-black/5"} 
-            onClick={onToggleSidebar} 
-            aria-label="Toggle sidebar"
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
-        )}
+        {/* Sidebar toggle button - visible on all screen sizes but styled differently */}
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className={cn(buttonTextClass, buttonHoverClass)} 
+          onClick={onToggleSidebar} 
+          aria-label="Toggle sidebar"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
         
-        {!isMobile && (
+        {/* Back button - conditionally shown based on prop and screen size */}
+        {showBackButton && !isMobile && (
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={handleBackClick} 
-            className={isDarkMode ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-black/5"} 
+            className={cn(buttonTextClass, buttonHoverClass)} 
             aria-label="Back to dashboard"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
         )}
         
-        <h1 className={cn(
-          "font-semibold truncate", 
-          isMobile ? "text-sm max-w-[150px]" : "text-xl"
-        )}>
-          {pageTitle}
-        </h1>
+        {/* Page title with optional help tooltip */}
+        <div className="flex items-center">
+          <h1 className={cn(
+            "font-semibold truncate", 
+            isMobile ? "text-sm max-w-[150px]" : "text-xl"
+          )}>
+            {pageTitle}
+          </h1>
+          
+          {helpTooltip && (
+            <TooltipProvider>
+              <Tooltip delayDuration={300}>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 p-0 ml-1"
+                    aria-label="Page information"
+                  >
+                    <Info className="h-4 w-4 text-gray-400" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-xs">
+                  <p className="text-sm">{helpTooltip}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
       </div>
 
-      <div className="flex items-center space-x-1 md:space-x-4">
+      <div className="flex items-center space-x-1 md:space-x-2">
+        {/* Notification button - hidden on mobile */}
         {!isMobile && (
           <Button 
             variant="ghost" 
             size="icon" 
             className={cn(
               "rounded-full", 
-              isDarkMode ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-black/5"
+              buttonTextClass, buttonHoverClass
             )} 
             aria-label="Notifications"
           >
@@ -90,14 +127,16 @@ export function DashboardHeader({
           </Button>
         )}
         
+        {/* Theme toggle - consistent with design language */}
         <ThemeToggle 
           variant="ghost" 
           className={cn(
             "rounded-full", 
-            isDarkMode ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-black/5"
+            buttonTextClass, buttonHoverClass
           )} 
         />
         
+        {/* User profile button - more prominent styling */}
         <Button 
           variant="ghost" 
           size="icon" 
