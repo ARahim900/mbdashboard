@@ -1,90 +1,114 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import React from "react";
+import { AlertCircle, RefreshCw } from "lucide-react";
+import { useTheme } from "@/lib/theme-context";
 
 interface ErrorBoundaryProps {
-  children: ReactNode;
-  fallback?: ReactNode;
+  children: React.ReactNode;
+  fallbackComponent?: React.ReactNode;
+  onReset?: () => void;
 }
 
 interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
-  errorInfo: ErrorInfo | null;
+  errorInfo: React.ErrorInfo | null;
 }
 
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = {
-      hasError: false,
-      error: null,
-      errorInfo: null
-    };
-  }
+const DefaultErrorFallback = ({ 
+  error, 
+  resetError 
+}: { 
+  error: Error | null; 
+  resetError: () => void;
+}) => {
+  const { isDarkMode } = useTheme();
+  
+  return (
+    <div className={`error-container p-4 rounded-lg shadow-md ${
+      isDarkMode 
+        ? 'bg-red-900/20 border border-red-800' 
+        : 'bg-red-50 border border-red-200'
+    }`}>
+      <div className="flex items-start">
+        <AlertCircle className={`h-5 w-5 mr-2 flex-shrink-0 ${
+          isDarkMode ? 'text-red-400' : 'text-red-600'
+        }`} />
+        <div>
+          <h2 className={`font-medium ${
+            isDarkMode ? 'text-red-400' : 'text-red-600'
+          }`}>
+            Something went wrong
+          </h2>
+          {error && (
+            <p className={`mt-1 text-sm ${
+              isDarkMode ? 'text-red-300' : 'text-red-500'
+            }`}>
+              {error.message}
+            </p>
+          )}
+          <button 
+            className={`mt-3 px-3 py-1.5 rounded flex items-center text-sm font-medium ${
+              isDarkMode 
+                ? 'bg-red-800/50 text-red-200 hover:bg-red-800/70' 
+                : 'bg-red-100 text-red-700 hover:bg-red-200'
+            }`}
+            onClick={resetError}
+            aria-label="Retry"
+          >
+            <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+            Try again
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    // Update state so the next render will show the fallback UI
-    return {
-      hasError: true,
-      error,
-      errorInfo: null
-    };
+export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  state: ErrorBoundaryState = { 
+    hasError: false, 
+    error: null,
+    errorInfo: null 
+  };
+  
+  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
+    return { hasError: true, error };
   }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Log the error to an error reporting service
+  
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    this.setState({ errorInfo });
+    
+    // Log the error
     console.error("Component error:", error, errorInfo);
     
-    this.setState({
-      error,
-      errorInfo
-    });
+    // Here you could send to an error tracking service like Sentry
+    // if (typeof window !== 'undefined' && window.Sentry) {
+    //   window.Sentry.captureException(error, { extra: { componentStack: errorInfo.componentStack } });
+    // }
   }
-
-  resetErrorBoundary = (): void => {
-    this.setState({
-      hasError: false,
-      error: null,
-      errorInfo: null
-    });
-  };
-
-  render(): ReactNode {
-    if (this.state.hasError) {
-      // Custom fallback UI
-      return this.props.fallback || (
-        <div className="p-4 animate-in fade-in duration-300">
-          <Alert variant="destructive" className="border-red-200 dark:border-red-900">
-            <AlertTitle className="text-red-600 dark:text-red-400 font-medium">
-              Something went wrong
-            </AlertTitle>
-            <AlertDescription className="mt-2 text-sm text-red-600/90 dark:text-red-400/90">
-              <p>There was an error rendering this component.</p>
-              {process.env.NODE_ENV === 'development' && this.state.error && (
-                <details className="mt-2 text-xs">
-                  <summary className="cursor-pointer">Error details</summary>
-                  <pre className="mt-2 whitespace-pre-wrap text-xs overflow-auto max-h-[300px] p-2 bg-red-50 dark:bg-red-900/10 rounded">
-                    {this.state.error.toString()}
-                    {this.state.errorInfo && this.state.errorInfo.componentStack}
-                  </pre>
-                </details>
-              )}
-            </AlertDescription>
-            <Button 
-              onClick={this.resetErrorBoundary}
-              className="mt-3 bg-red-100 hover:bg-red-200 text-red-700 border-none flex items-center gap-2"
-              size="sm"
-            >
-              <RefreshCw className="h-3 w-3" />
-              <span>Try again</span>
-            </Button>
-          </Alert>
-        </div>
-      );
+  
+  resetError = () => {
+    this.setState({ hasError: false, error: null, errorInfo: null });
+    
+    // Call custom reset handler if provided
+    if (this.props.onReset) {
+      this.props.onReset();
     }
-
-    return this.props.children;
+  };
+  
+  render() {
+    const { children, fallbackComponent } = this.props;
+    const { hasError, error } = this.state;
+    
+    if (hasError) {
+      // Use custom fallback if provided, otherwise use default
+      if (fallbackComponent) {
+        return fallbackComponent;
+      }
+      
+      return <DefaultErrorFallback error={error} resetError={this.resetError} />;
+    }
+    
+    return children;
   }
 }
