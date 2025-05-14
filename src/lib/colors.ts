@@ -13,7 +13,7 @@ export const COLORS = {
   borderDark: '#4B5563',   // Dark border color
   bgDark: '#111827',       // Slightly darker than gray-900 for main bg
   bgDarkElevated: '#1F2937', // gray-800 for elevated surfaces like cards/modals
-  bgDarkSidebar: '#1A202C', // Darker sidebar background
+  bgDarkSidebar: '#4E4456', // Fixed sidebar color regardless of theme
 };
 
 // CSS variable generator for consistent theming
@@ -30,7 +30,7 @@ export const generateCssVariables = (isDark = false) => {
     '--color-border': isDark ? COLORS.borderDark : COLORS.borderLight,
     '--color-bg': isDark ? COLORS.bgDark : 'white',
     '--color-bg-elevated': isDark ? COLORS.bgDarkElevated : 'white',
-    '--color-bg-sidebar': isDark ? COLORS.bgDarkSidebar : COLORS.primaryLight,
+    '--color-bg-sidebar': COLORS.primary, // Always use primary color for sidebar
     '--color-card-shadow': isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.1)',
   };
 };
