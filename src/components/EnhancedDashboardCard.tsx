@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { COLORS } from "@/lib/colors";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useTheme } from "@/lib/theme-context";
+import { ArrowRight } from "lucide-react";
 
 interface EnhancedDashboardCardProps {
   title: string;
@@ -36,18 +37,18 @@ export function EnhancedDashboardCard({
   const { isDarkMode } = useTheme();
   
   // More consistent height management
-  const cardHeight = isMobile ? "min-h-[150px]" : isTablet ? "min-h-[180px]" : "aspect-square";
+  const cardHeight = isMobile ? "min-h-[150px]" : isTablet ? "min-h-[180px]" : "min-h-[220px]";
 
   return (
     <div 
       className={cn(
-        "rounded-xl transition-all duration-300",
+        "rounded-lg transition-all duration-300",
         "flex flex-col border",
-        "hover:shadow-lg hover:-translate-y-1",
+        "hover:shadow-lg hover:-translate-y-1 group",
         isDarkMode 
-          ? "bg-[#1F2937] border-[#4B5563] dark:shadow-lg dark:hover:shadow-xl" 
-          : "bg-white border-[#E5E7EB] shadow-md",
-        isMobile ? "p-4" : isTablet ? "p-4" : "p-5",
+          ? "bg-[#1F2937] border-[#4B5563]/30 shadow-md shadow-black/10" 
+          : "bg-white border-[#E5E7EB] shadow-lg shadow-gray-100/80",
+        isMobile ? "p-4" : isTablet ? "p-5" : "p-6",
         cardHeight, // Responsive height handling
         onClick && "cursor-pointer",
         className
@@ -65,33 +66,33 @@ export function EnhancedDashboardCard({
       }}
     >
       {/* Card Header */}
-      <div className="flex justify-between items-start mb-3 md:mb-4">
+      <div className="flex justify-between items-start mb-5">
         <div className="pr-2">
-          <p className={cn(
-            "font-medium",
-            isDarkMode ? "text-gray-400" : "text-[#6B7280]",
-            isMobile ? "text-xs" : "text-sm"
+          <h3 className={cn(
+            "font-bold",
+            isDarkMode ? "text-white" : "text-[#4E4456]",
+            isMobile ? "text-base" : "text-lg"
           )}>
             {title}
-          </p>
+          </h3>
           {subtitle && (
             <p className={cn(
-              "font-semibold mt-0.5 md:mt-1", 
-              isDarkMode ? "text-gray-300" : "text-[#4E4456]",
-              isMobile ? "text-[10px]" : "text-xs"
+              "font-medium mt-1", 
+              isDarkMode ? "text-gray-300" : "text-[#6B7280]",
+              isMobile ? "text-xs" : "text-sm"
             )}>
               {subtitle}
             </p>
           )}
         </div>
         <div className={cn(
-          `rounded-xl ${iconBgColor} ${iconTextColor}`,
-          isMobile ? "p-2" : "p-3"
+          `rounded-full ${iconBgColor} ${iconTextColor}`,
+          isMobile ? "p-2.5" : "p-3"
         )}>
           {React.cloneElement(
             icon as React.ReactElement, 
             { 
-              className: isMobile ? "h-4 w-4" : "h-6 w-6", 
+              className: isMobile ? "h-4 w-4" : "h-5 w-5", 
               "aria-hidden": "true" 
             }
           )}
@@ -99,35 +100,43 @@ export function EnhancedDashboardCard({
       </div>
       
       {/* Card Value */}
-      <h3 className={cn(
-        "font-bold mt-1 md:mt-2 tracking-tight",
+      <h2 className={cn(
+        "font-bold mt-1 tracking-tight",
         isDarkMode ? "text-[#E5E7EB]" : "text-[#374151]",
-        isMobile ? "text-xl sm:text-2xl" : "text-3xl"
+        isMobile ? "text-2xl" : "text-3xl"
       )}>
         {value}
-      </h3>
+      </h2>
       
       {/* Card Footer */}
       <div className={cn(
-        "mt-auto pt-3 md:pt-4 border-t",
-        isDarkMode ? "border-[#4B5563]" : "border-[#E5E7EB]",
-        isMobile ? "mt-2" : "mt-auto"
+        "mt-auto pt-4 flex items-center justify-between",
+        isMobile ? "mt-3" : "mt-auto"
       )}>
         <div className="flex items-center">
           <span className={cn(
-            `font-semibold ${trendColorClass}`,
-            isMobile ? "text-[10px]" : "text-xs"
+            `font-medium flex items-center gap-1 ${trendColorClass}`,
+            isMobile ? "text-xs" : "text-sm"
           )}>
-            {isPositive ? '▲' : '▼'} {Math.abs(trend)}%
+            {isPositive ? '↑' : '↓'} {Math.abs(trend)}%
           </span>
           <span className={cn(
             "ml-2",
             isDarkMode ? "text-gray-400" : "text-[#6B7280]",
-            isMobile ? "text-[10px]" : "text-xs"
+            isMobile ? "text-xs" : "text-sm"
           )}>
             {trendLabel}
           </span>
         </div>
+        
+        {onClick && (
+          <div className={cn(
+            "transition-all duration-300 opacity-0 group-hover:opacity-100",
+            isDarkMode ? "text-white" : "text-[#4E4456]"
+          )}>
+            <ArrowRight className="h-4 w-4" />
+          </div>
+        )}
       </div>
     </div>
   );
