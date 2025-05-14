@@ -54,7 +54,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       />
       
       <div className={cn(
-        "flex flex-col flex-1 overflow-hidden transition-all duration-300",
+        "flex flex-col flex-1 overflow-hidden transition-all duration-300 ease-in-out",
         isDesktop && !sidebarCollapsed ? "lg:ml-64" : isDesktop ? "lg:ml-16" : "ml-0"
       )}>
         <DashboardHeader 
@@ -63,9 +63,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         />
         
         <main 
-          className="flex-1 overflow-y-auto p-4 md:p-6"
+          className="flex-1 overflow-y-auto p-4 md:p-6 transition-all duration-300 ease-in-out"
         >
-          <div className="container mx-auto max-w-full">
+          <div className="container mx-auto max-w-full animate-fade-in">
             {children}
           </div>
         </main>
