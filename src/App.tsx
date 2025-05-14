@@ -18,14 +18,10 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Enhanced loading component with subtle animation
 const LoadingPage = () => {
-  // Using direct context for initial loading since useTheme hook might not be available yet
-  const context = React.useContext(ThemeContext);
-  const isDarkMode = context?.isDarkMode || false;
-  
+  // Fix: Use a default value instead of direct context access
+  // This ensures the component doesn't crash if the context is undefined
   return (
-    <div className={`flex flex-col items-center justify-center h-screen ${
-      isDarkMode ? 'bg-[#111827] text-white' : 'bg-white text-gray-800'
-    }`}>
+    <div className="flex flex-col items-center justify-center h-screen bg-white text-gray-800 dark:bg-[#111827] dark:text-white">
       <Loader2 className="h-12 w-12 animate-spin text-[#4E4456]" aria-hidden="true" />
       <p className="mt-4 font-medium">Loading...</p>
     </div>
