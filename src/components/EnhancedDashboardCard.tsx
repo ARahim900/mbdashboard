@@ -40,12 +40,15 @@ export function EnhancedDashboardCard({
         "border border-[#E5E7EB] dark:border-[#4B5563] flex flex-col",
         "mobile-card", // CSS class from index.css
         "transition-all duration-300 hover:shadow-lg dark:hover:shadow-xl hover:-translate-y-1",
-        isMobile ? "p-4" : "p-5",
-        isMobile ? "" : "aspect-square", // Only make it square on larger screens
+        isMobile ? "p-4" : isTablet ? "p-4" : "p-5",
+        isMobile ? "min-h-[150px]" : isTablet ? "min-h-[180px]" : "aspect-square", // Responsive height handling
         onClick && "cursor-pointer",
         className
       )}
       onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      aria-label={onClick ? `View ${title} details` : undefined}
     >
       {/* Card Header */}
       <div className="flex justify-between items-start mb-3 md:mb-4">
@@ -58,7 +61,7 @@ export function EnhancedDashboardCard({
           </p>
           {subtitle && (
             <p className={cn(
-              "text-[#4E4456] font-semibold mt-0.5 md:mt-1", 
+              "text-[#4E4456] dark:text-gray-300 font-semibold mt-0.5 md:mt-1", 
               isMobile ? "text-[10px]" : "text-xs"
             )}>
               {subtitle}
@@ -71,7 +74,7 @@ export function EnhancedDashboardCard({
         )}>
           {React.cloneElement(
             icon as React.ReactElement, 
-            { className: isMobile ? "h-4 w-4" : "h-6 w-6" }
+            { className: isMobile ? "h-4 w-4" : "h-6 w-6", "aria-hidden": "true" }
           )}
         </div>
       </div>
@@ -88,7 +91,7 @@ export function EnhancedDashboardCard({
       {/* Card Footer */}
       <div className={cn(
         "mt-auto pt-3 md:pt-4 border-t border-[#E5E7EB] dark:border-[#4B5563]",
-        isMobile ? "mt-3" : ""
+        isMobile ? "mt-2" : "mt-auto"
       )}>
         <div className="flex items-center">
           <span className={cn(
