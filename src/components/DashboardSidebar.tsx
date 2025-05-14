@@ -36,7 +36,7 @@ const NavItem = ({
     className={({
       isActive
     }) => cn("flex items-center py-2 px-4 rounded-lg transition-all", 
-      isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground", 
+      isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "text-white hover:bg-sidebar-accent/50 hover:text-sidebar-foreground", 
       collapsed && "justify-center px-3")}>
       <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10">
         {icon}
@@ -55,17 +55,18 @@ export function DashboardSidebar({
 }: DashboardSidebarProps) {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   
-  // Auto-collapse sidebar on mobile screens
-  useEffect(() => {
-    if (!isDesktop && !collapsed) {
-      onToggle();
-    }
-  }, [isDesktop, collapsed, onToggle]);
+  // Do not auto-collapse sidebar on mobile screens - we want it fixed
+  // unless explicitly toggled by the user
+  // useEffect(() => {
+  //   if (!isDesktop && !collapsed) {
+  //     onToggle();
+  //   }
+  // }, [isDesktop, collapsed, onToggle]);
 
-  // Desktop sidebar
+  // Desktop sidebar with fixed background color
   const DesktopSidebar = (
     <aside className={cn(
-      "fixed top-0 left-0 h-screen bg-sidebar text-sidebar-foreground flex flex-col transition-all z-40 border-r border-sidebar-border lg:block", 
+      "fixed top-0 left-0 h-screen bg-[#4E4456] text-white flex flex-col transition-all z-40 border-r border-sidebar-border lg:block", 
       collapsed ? "w-16" : "w-64",
       !isDesktop && !mobileOpen && "hidden"
     )}>
@@ -79,7 +80,7 @@ export function DashboardSidebar({
             </p>
         </div>}
         
-        <Button variant="ghost" className={cn("p-1", collapsed ? "w-10 h-10" : "h-8 w-8")} onClick={onToggle} aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
+        <Button variant="ghost" className={cn("p-1 text-white hover:bg-white/10", collapsed ? "w-10 h-10" : "h-8 w-8")} onClick={onToggle} aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
           {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
         </Button>
       </div>
@@ -97,7 +98,7 @@ export function DashboardSidebar({
       </nav>
       
       <div className="p-3">
-        <div className={cn("rounded-lg py-2 px-4 bg-sidebar-accent/50 text-xs text-sidebar-foreground/80 flex items-center", collapsed ? "justify-center px-3" : "")}>
+        <div className={cn("rounded-lg py-2 px-4 bg-white/10 text-xs text-white flex items-center", collapsed ? "justify-center px-3" : "")}>
           {collapsed ? <span className="text-xs">v1.0</span> : <span>Muscat Bay v1.0</span>}
         </div>
       </div>
@@ -117,7 +118,7 @@ export function DashboardSidebar({
     <>
       {/* Mobile Menu Button - Only visible on small screens */}
       <button 
-        className="fixed top-4 left-4 z-50 p-2 rounded-md bg-sidebar text-sidebar-foreground lg:hidden"
+        className="fixed top-4 left-4 z-50 p-2 rounded-md bg-[#4E4456] text-white lg:hidden"
         onClick={onMobileToggle}
         aria-label={mobileOpen ? "Close menu" : "Open menu"}
       >
