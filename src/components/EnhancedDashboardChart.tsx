@@ -25,37 +25,118 @@ interface EnhancedDashboardChartProps {
   dataKeys: string[];
   colors: string[];
   height?: number;
-  isDarkMode?: boolean;
   className?: string;
+  units?: Record<string, string>;  // Optional units for each dataKey
+  title?: string;  // Optional chart title
+  hideLegend?: boolean;  // Option to hide legend on any screen size
 }
 
-// Custom tooltip component for better presentation
-const CustomTooltip = ({ active, payload, label }: TooltipProps<any, any>) => {
+// Enhanced tooltip component with better presentation and unit support
+const CustomTooltip = ({ 
+  active, 
+  payload, 
+  label, 
+  units 
+}: TooltipProps<any, any> & { units?: Record<string, string> }) => {
   const { isDarkMode } = useTheme();
   
   if (!active || !payload || !payload.length) return null;
   
   return (
     <div 
-      className={`custom-tooltip p-2 rounded-lg shadow-lg border ${
+      className={`custom-tooltip p-3 rounded-lg shadow-lg border ${ 
         isDarkMode 
           ? 'bg-[#1F2937] border-[#4B5563] text-[#E5E7EB]' 
           : 'bg-white border-[#E5E7EB] text-[#374151]'
       }`}
     >
-      <p className="text-sm font-medium mb-1">{label}</p>
-      {payload.map((entry, index) => (
-        <div key={index} className="flex items-center text-xs">
-          <div 
-            className="w-3 h-3 rounded-full mr-2" 
-            style={{ backgroundColor: entry.color }}
-          />
-          <span className="mr-2">{entry.name || entry.dataKey}:</span>
-          <span className="font-semibold">{entry.value}</span>
-        </div>
-      ))}
+      <p className="text-sm font-medium mb-2">{label}</p>
+      <div className="space-y-1.5">
+        {payload.map((entry, index) => {
+          const dataKey = entry.dataKey || entry.name;
+          const unit = units && units[dataKey] ? units[dataKey] : '';
+          
+          return (
+            <div key={index} className="flex items-center justify-between text-xs">
+              <div className="flex items-center">
+                <div 
+                  className="w-3 h-3 rounded-full mr-2" 
+                  style={{ backgroundColor: entry.color }}
+                  aria-hidden="true"
+                />
+                <span className="mr-2">{entry.name || entry.dataKey}:</span>
+              </div>
+              <span className="font-semibold">
+                {typeof entry.value === 'number' 
+                  ? Number(entry.value).toLocaleString() 
+                  : entry.value}
+                {unit && ` ${unit}`}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
+};
+
+// Chart utilities for consistent styling and responsive behavior
+const chartUtils = {
+  getFormattersBySize: (isMobile: boolean, isTablet: boolean) => {
+    return {
+      legendFormatter: (value: string) => {
+        if (isMobile && value.length > 10) {
+          return `${value.substring(0, 8)}...`;
+        } else if (isTablet && value.length > 15) {
+          return `${value.substring(0, 12)}...`;
+        }
+        return value;
+      },
+      
+      tickFormatter: (value: string) => {
+        if (isMobile && value.length > 5) {
+          return value.substring(0, 5) + "...";
+        } else if (isTablet && value.length > 8) {
+          return value.substring(0, 8) + "...";
+        }
+        return value;
+      },
+      
+      numberFormatter: (value: number) => {
+        if (isMobile) {
+          // Simplified for mobile
+          if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+          if (value >= 1000) return (value / 1000).toFixed(1) + 'K';
+          return value.toString();
+        }
+        return value.toLocaleString();
+      }
+    };
+  },
+  
+  // Responsive sizing based on device
+  getSizing: (isMobile: boolean, isTablet: boolean) => {
+    return {
+      fontSize: isMobile ? 10 : 12,
+      dotRadius: isMobile ? 3 : 4,
+      activeDotRadius: isMobile ? 5 : 7,
+      strokeWidth: isMobile ? 2 : 2.5,
+      barSize: isMobile ? 25 : isTablet ? 30 : 35,
+      pieOuterRadius: isMobile ? 70 : 90,
+      pieInnerRadius: isMobile ? 40 : 55
+    };
+  },
+  
+  // Responsive margin based on device
+  getMargin: (isMobile: boolean, isTablet: boolean) => {
+    if (isMobile) {
+      return { top: 10, right: 10, left: -15, bottom: 15 };
+    } else if (isTablet) {
+      return { top: 10, right: 15, left: -10, bottom: 20 };
+    } else {
+      return { top: 15, right: 20, left: -5, bottom: 20 };
+    }
+  }
 };
 
 export function EnhancedDashboardChart({
@@ -64,7 +145,10 @@ export function EnhancedDashboardChart({
   dataKeys,
   colors,
   height = 250,
-  className
+  className,
+  units,
+  title,
+  hideLegend = false
 }: EnhancedDashboardChartProps) {
   const isMobile = useMediaQuery("(max-width: 640px)");
   const isTablet = useMediaQuery("(max-width: 1024px)");
@@ -74,35 +158,23 @@ export function EnhancedDashboardChart({
   if (!data || data.length === 0) {
     return (
       <div className={`chart-container flex items-center justify-center h-[${height}px] ${className || ''}`}>
-        <p className="text-sm text-gray-500 dark:text-gray-400">No data available</p>
+        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+          No data available
+        </p>
       </div>
     );
   }
   
+  // Get styling utilities based on current screen size
+  const { legendFormatter, tickFormatter } = chartUtils.getFormattersBySize(isMobile, isTablet);
+  const { fontSize, dotRadius, activeDotRadius, strokeWidth, barSize, pieOuterRadius, pieInnerRadius } = 
+    chartUtils.getSizing(isMobile, isTablet);
+  const margin = chartUtils.getMargin(isMobile, isTablet);
+  
   // Helper functions for chart styling based on dark mode
   const getChartStrokeColor = () => isDarkMode ? COLORS.borderDark : COLORS.borderLight;
   const getChartTextColor = () => isDarkMode ? COLORS.textLight : COLORS.textMuted;
-  
-  // Mobile optimizations
-  const getMargin = () => {
-    if (isMobile) {
-      return { top: 5, right: 5, left: -20, bottom: 5 };
-    } else if (isTablet) {
-      return { top: 5, right: 10, left: -15, bottom: 5 };
-    } else {
-      return { top: 5, right: 20, left: -10, bottom: 5 };
-    }
-  };
-
-  // Responsively adjust chart parameters
-  const getFontSize = () => isMobile ? 10 : 12;
-  const getBarSize = () => isMobile ? 25 : isTablet ? 30 : 35;
-  const getPieOuterRadius = () => isMobile ? 70 : 90;
-  const getPieInnerRadius = () => isMobile ? 40 : 55;
-  const getDotRadius = () => isMobile ? 3 : 4;
-  const getActiveDotRadius = () => isMobile ? 5 : 7;
-  const getStrokeWidth = () => isMobile ? 2 : 2.5;
-  
+    
   // Limit number of data points on small screens
   const limitDataForMobile = (originalData: any[]) => {
     if (!isMobile || originalData.length <= 5) return originalData;
@@ -117,53 +189,39 @@ export function EnhancedDashboardChart({
     ? limitDataForMobile(data) 
     : data;
 
-  // Custom formatter for mobile legend - truncate long text
-  const legendFormatter = (value: string) => {
-    if (isMobile && value.length > 10) {
-      return `${value.substring(0, 8)}...`;
-    }
-    return value;
-  };
-
-  // Custom tick formatter for X axis
-  const tickFormatter = (value: string) => {
-    if (isMobile && value.length > 5) {
-      return value.substring(0, 5) + "...";
-    }
-    return value;
-  };
-
   // Render different chart types
   const renderChart = () => {
     switch (type) {
       case "line":
         return (
-          <LineChart data={displayData} margin={getMargin()}>
+          <LineChart data={displayData} margin={margin}>
             <CartesianGrid strokeDasharray="3 3" stroke={getChartStrokeColor()} opacity={0.5} />
             <XAxis 
               dataKey="name" 
               stroke={getChartTextColor()} 
-              fontSize={getFontSize()} 
+              fontSize={fontSize} 
               tickLine={false} 
               axisLine={false}
-              tick={{ fontSize: getFontSize() }}
+              tick={{ fontSize }}
               tickMargin={5}
               tickFormatter={tickFormatter}
             />
             <YAxis 
               stroke={getChartTextColor()} 
-              fontSize={getFontSize()} 
+              fontSize={fontSize} 
               tickLine={false} 
               axisLine={false}
-              tick={{ fontSize: getFontSize() }}
+              tick={{ fontSize }}
               tickCount={isMobile ? 4 : 5}
             />
-            <Tooltip content={<CustomTooltip />} />
-            {!isMobile && (
+            <Tooltip content={<CustomTooltip units={units} />} />
+            {!hideLegend && (!isMobile || !isTablet) && (
               <Legend 
                 formatter={legendFormatter}
                 iconSize={isMobile ? 8 : 10} 
-                wrapperStyle={{ fontSize: getFontSize() }}
+                wrapperStyle={{ fontSize }}
+                verticalAlign={isMobile ? "bottom" : "top"}
+                align="center"
               />
             )}
             {dataKeys.map((key, index) => (
@@ -171,15 +229,17 @@ export function EnhancedDashboardChart({
                 key={key}
                 type="monotone" 
                 dataKey={key} 
+                name={key}
                 stroke={colors[index % colors.length]} 
-                strokeWidth={getStrokeWidth()} 
-                dot={{ r: getDotRadius(), fill: colors[index % colors.length] }} 
+                strokeWidth={strokeWidth} 
+                dot={{ r: dotRadius, fill: colors[index % colors.length] }} 
                 activeDot={{ 
-                  r: getActiveDotRadius(), 
+                  r: activeDotRadius, 
                   stroke: isDarkMode ? COLORS.bgDarkElevated : 'white', 
                   strokeWidth: 2, 
                   fill: colors[index % colors.length] 
                 }}
+                connectNulls={true} // Connect over missing data points
               />
             ))}
           </LineChart>
@@ -187,41 +247,44 @@ export function EnhancedDashboardChart({
       
       case "bar":
         return (
-          <BarChart data={displayData} margin={getMargin()}>
+          <BarChart data={displayData} margin={margin}>
             <CartesianGrid strokeDasharray="3 3" stroke={getChartStrokeColor()} opacity={0.5} />
             <XAxis 
               dataKey="name" 
               stroke={getChartTextColor()} 
-              fontSize={getFontSize()} 
+              fontSize={fontSize} 
               tickLine={false} 
               axisLine={false}
-              tick={{ fontSize: getFontSize() }}
+              tick={{ fontSize }}
               tickMargin={5}
               tickFormatter={tickFormatter}
             />
             <YAxis 
               stroke={getChartTextColor()} 
-              fontSize={getFontSize()} 
+              fontSize={fontSize} 
               tickLine={false} 
               axisLine={false}
-              tick={{ fontSize: getFontSize() }}
+              tick={{ fontSize }}
               tickCount={isMobile ? 4 : 5}
             />
-            <Tooltip content={<CustomTooltip />} />
-            {!isMobile && (
+            <Tooltip content={<CustomTooltip units={units} />} />
+            {!hideLegend && (!isMobile || !isTablet) && (
               <Legend 
                 formatter={legendFormatter}
                 iconSize={isMobile ? 8 : 10} 
-                wrapperStyle={{ fontSize: getFontSize() }}
+                wrapperStyle={{ fontSize }}
+                verticalAlign={isMobile ? "bottom" : "top"}
+                align="center"
               />
             )}
             {dataKeys.map((key, index) => (
               <Bar 
                 key={key}
                 dataKey={key} 
+                name={key}
                 fill={colors[index % colors.length]} 
                 radius={[4, 4, 0, 0]} 
-                barSize={getBarSize()}
+                barSize={barSize}
               />
             ))}
           </BarChart>
@@ -229,14 +292,15 @@ export function EnhancedDashboardChart({
       
       case "pie":
         return (
-          <PieChart>
+          <PieChart margin={margin}>
             <Pie
               data={data}
               cx="50%"
               cy="50%"
-              outerRadius={getPieOuterRadius()}
-              innerRadius={getPieInnerRadius()}
+              outerRadius={pieOuterRadius}
+              innerRadius={pieInnerRadius}
               dataKey={dataKeys[0]}
+              nameKey="name"
               labelLine={!isMobile}
               label={isMobile ? false : ({ percent }) => `${(percent * 100).toFixed(0)}%`}
             >
@@ -249,19 +313,22 @@ export function EnhancedDashboardChart({
                 />
               ))}
             </Pie>
-            <Tooltip content={<CustomTooltip />} />
-            <Legend 
-              formatter={(value, entry) => (
-                <span className={`${isDarkMode ? 'text-gray-300' : 'text-text-muted'} ml-1.5 ${isMobile ? 'text-[10px]' : 'text-xs'}`}>
-                  {legendFormatter(value)} {!isMobile && `(${entry.payload[dataKeys[0]]})`}
-                </span>
-              )} 
-              iconSize={isMobile ? 8 : 10} 
-              wrapperStyle={{ fontSize: isMobile ? '0.65rem' : '0.75rem' }}
-              layout={isMobile ? "horizontal" : "vertical"}
-              verticalAlign={isMobile ? "bottom" : "middle"}
-              align={isMobile ? "center" : "right"}
-            />
+            <Tooltip content={<CustomTooltip units={units} />} />
+            {!hideLegend && (
+              <Legend 
+                formatter={(value, entry) => (
+                  <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} ml-1.5 ${isMobile ? 'text-[10px]' : 'text-xs'}`}>
+                    {legendFormatter(value)}
+                    {!isMobile && entry.payload && entry.payload[dataKeys[0]] && ` (${entry.payload[dataKeys[0]]}${units && units[dataKeys[0]] ? ` ${units[dataKeys[0]]}` : ''})`}
+                  </span>
+                )} 
+                iconSize={isMobile ? 8 : 10} 
+                wrapperStyle={{ fontSize: isMobile ? '0.65rem' : '0.75rem' }}
+                layout={isMobile ? "horizontal" : "vertical"}
+                verticalAlign={isMobile ? "bottom" : "middle"}
+                align={isMobile ? "center" : "right"}
+              />
+            )}
           </PieChart>
         );
       
@@ -272,6 +339,13 @@ export function EnhancedDashboardChart({
 
   return (
     <div className={`chart-container ${className || ''}`}>
+      {title && (
+        <h3 className={`text-${isMobile ? 'sm' : 'base'} font-medium mb-2 ${
+          isDarkMode ? 'text-gray-200' : 'text-gray-700'
+        }`}>
+          {title}
+        </h3>
+      )}
       <ResponsiveContainer width="100%" height={height}>
         {renderChart()}
       </ResponsiveContainer>
